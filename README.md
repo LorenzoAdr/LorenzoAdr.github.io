@@ -18,9 +18,9 @@ npm run build
 
 Salida en `dist/`.
 
-## Enlaces a editar
+## Enlaces de contacto
 
-En `src/pages/index.astro`, ajusta las constantes `LINKEDIN_URL` y `EMAIL_HREF` (o el bloque de contacto) a tus URLs reales.
+Definidos en `src/pages/index.astro` (`LINKEDIN_URL`, `CONTACT_EMAIL`). Actualízalos si cambian.
 
 ## GitHub Pages (repo `username.github.io`)
 
