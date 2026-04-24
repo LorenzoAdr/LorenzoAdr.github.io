@@ -27,4 +27,4 @@ Definidos en `src/pages/index.astro` (`LINKEDIN_URL`, `CONTACT_EMAIL`). Actualí
 1. En el repo **LorenzoAdr.github.io**, Settings → Pages → Build: **GitHub Actions** (recomendado) o sube el contenido de `dist/` a la rama que Pages use como raíz.
 2. Si usas Actions, un workflow típico hace `npm ci && npm run build` y publica `dist/` con `actions/upload-pages-artifact` + `deploy-pages`.
 
-El proyecto **VarMonitor** enlazado por defecto a `https://lorenzoadr.github.io/RealTimeMonitor/` (mismo usuario, repo de proyecto).
+El proyecto **VarMonitor** enlazado por defecto a `https://lorenzoadr.github.io/VarMonitor/` (mismo usuario, repo de proyecto).
