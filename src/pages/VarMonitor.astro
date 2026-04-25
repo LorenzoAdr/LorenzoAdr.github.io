@@ -1,0 +1,111 @@
+---
+import MainLayout from '../layouts/MainLayout.astro';
+
+const title = 'VarMonitor | Unified Engineering Dashboard';
+const description =
+	'VarMonitor stack view inside the unified dashboard: SHM core, TIE debugger workflows, and Pulse Integrity operations.';
+---
+
+<MainLayout title={title} description={description} activeNav="shm">
+	<section class="panel reveal" id="shm">
+		<p class="panel-tag">01. SHM CORE (INFRA)</p>
+		<h1 class="section-title">Shared Memory Backbone</h1>
+		<p class="text">
+			The SHM core provides deterministic low-latency data exchange between runtime publishers, debugger workflows, and operational
+			integrity modules.
+		</p>
+	</section>
+
+	<section class="panel reveal" id="dev">
+		<p class="panel-tag">02. TIE DEBUGGER (DEV)</p>
+		<h2 class="section-title">Development and Debug Iteration</h2>
+		<p class="text">
+			TIE focuses on fast engineering loops: inspect variables, reproduce behavior, and iterate without leaving the unified command surface.
+		</p>
+	</section>
+
+	<section class="panel reveal" id="ops">
+		<p class="panel-tag">03. PULSE INTEGRITY (OPS)</p>
+		<h2 class="section-title">Runtime Integrity Monitoring</h2>
+		<p class="text">
+			Pulse Integrity tracks live telemetry quality, jitter and anomalies during operation, providing continuous insight without interrupting
+			the running system.
+		</p>
+	</section>
+</MainLayout>
+
+<style>
+	.panel {
+		margin: 20px;
+		border: 1px solid rgb(51 65 85 / 0.5);
+		border-radius: 16px;
+		padding: 20px;
+		background: rgb(15 23 42 / 0.6);
+		backdrop-filter: blur(10px);
+		transition: transform 0.3s ease, border-color 0.3s ease;
+	}
+
+	.panel:hover {
+		transform: translateY(-4px);
+		border-color: rgb(34 211 238 / 0.35);
+	}
+
+	.panel-tag {
+		margin: 0 0 12px;
+		font-family: 'JetBrains Mono', 'Fira Code', ui-monospace, SFMono-Regular, Menlo, monospace;
+		font-size: 11px;
+		letter-spacing: 0.08em;
+		color: rgb(125 211 252 / 0.9);
+		text-transform: uppercase;
+	}
+
+	.section-title {
+		margin: 0;
+		font-size: clamp(1.4rem, 3.2vw, 2rem);
+		background: linear-gradient(to bottom, #ffffff, #94a3b8);
+		-webkit-background-clip: text;
+		background-clip: text;
+		color: transparent;
+	}
+
+	.text {
+		margin: 12px 0 0;
+		line-height: 1.65;
+		color: #94a3b8;
+	}
+
+	.reveal {
+		opacity: 0;
+		transform: translateY(16px);
+		transition: opacity 700ms ease, transform 700ms ease;
+	}
+
+	.reveal.is-visible {
+		opacity: 1;
+		transform: translateY(0);
+	}
+
+	@media (max-width: 720px) {
+		.panel {
+			margin: 14px;
+			padding: 16px;
+		}
+	}
+</style>
+
+<script is:inline>
+	(() => {
+		const nodes = document.querySelectorAll('.reveal');
+		const observer = new IntersectionObserver(
+			(entries) => {
+				entries.forEach((entry) => {
+					if (!entry.isIntersecting) return;
+					entry.target.classList.add('is-visible');
+					observer.unobserve(entry.target);
+				});
+			},
+			{ threshold: 0.12, rootMargin: '0px 0px -10% 0px' },
+		);
+		nodes.forEach((node) => observer.observe(node));
+	})();
+</script>

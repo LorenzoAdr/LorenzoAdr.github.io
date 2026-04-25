@@ -1,0 +1,395 @@
+---
+import '../styles/global.css';
+import { ClientRouter } from 'astro:transitions';
+
+interface Props {
+	title?: string;
+	description?: string;
+	activeNav?: 'intro' | 'shm' | 'tie' | 'pulse';
+}
+
+const {
+	title = 'Lorenzo ADR | Unified Engineering Dashboard',
+	description = 'Unified lifecycle dashboard for real-time C++ systems.',
+	activeNav = 'intro',
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="description" content={description} />
+		<meta name="generator" content={Astro.generator} />
+		<title>{title}</title>
+		<ClientRouter />
+	</head>
+	<body class="min-h-dvh bg-slate-950 text-slate-300 antialiased selection:bg-cyan-500/20 selection:text-cyan-100">
+		<div id="bg-spotlight" aria-hidden="true" class="pointer-events-none fixed inset-0 -z-10 opacity-80"></div>
+		<div id="bg-grain" aria-hidden="true" class="pointer-events-none fixed inset-0 z-[1] opacity-[0.025]"></div>
+		<div class="dashboard-shell relative z-10">
+			<aside class="dashboard-sidebar" transition:persist>
+				<div class="sidebar-header">
+					<a href="/" class="sidebar-logo" aria-label="LADR home">
+						<span class="sidebar-logo-text">
+							<span class="font-bold">L</span><span class="font-light">ADR</span>
+						</span>
+						<span class="logo-status-led size-[5px] shrink-0 rounded-full bg-cyan-400" aria-hidden="true"></span>
+					</a>
+				</div>
+				<nav class="sidebar-nav" aria-label="Primary">
+					<a id="nav-intro" href="/#intro" class:list={['sidebar-link', activeNav === 'intro' && 'is-active']}>
+						<span class="sidebar-link-logo sidebar-link-logo--ladr"><span class="font-bold">L</span><span class="font-light">ADR</span></span>
+					</a>
+					<a id="nav-shm" href="/#shm" class:list={['sidebar-link', activeNav === 'shm' && 'is-active']}>
+						<span class="sidebar-link-logo sidebar-link-logo--shm"><span class="font-bold">SHM</span><span class="font-light">Core</span></span>
+						<span class="sidebar-link-suffix">(Engine)</span>
+					</a>
+					<a id="nav-tie" href="/#tie" class:list={['sidebar-link', activeNav === 'tie' && 'is-active']}>
+						<span class="sidebar-link-logo sidebar-link-logo--varmonitor"><span class="font-bold">VAR</span><span class="font-light">MONITOR</span></span>
+						<span class="sidebar-link-suffix">(DEV)</span>
+					</a>
+					<a id="nav-pulse" href="/#pulse" class:list={['sidebar-link', activeNav === 'pulse' && 'is-active']}>
+						<span class="sidebar-link-logo sidebar-link-logo--pulse"><span class="font-semibold">PULSE</span><span class="font-light">INTEGRITY</span></span>
+						<span class="sidebar-link-suffix">(OPS)</span>
+					</a>
+				</nav>
+				<section class="sidebar-contact">
+					<div class="sidebar-contact-plain">
+						<a href="https://es.linkedin.com/in/lorenzo-arias-del-real" target="_blank" rel="noopener noreferrer" class="sidebar-contact-link">LinkedIn</a>
+						<a href="https://github.com/LorenzoAdr" target="_blank" rel="noopener noreferrer" class="sidebar-contact-link">GitHub</a>
+						<span class="sidebar-email-text">lorenzo.adr@proton.me</span>
+					</div>
+				</section>
+			</aside>
+			<main class="dashboard-content">
+				<slot />
+			</main>
+		</div>
+		<script is:inline>
+			(() => {
+				const getDashboardModeFromHash = (hash) => {
+					if (hash === '#shm') return 'shm';
+					if (hash === '#tie') return 'tie';
+					if (hash === '#pulse') return 'pulse';
+					return 'intro';
+				};
+
+				const updateSidebarActive = () => {
+					const intro = document.getElementById('nav-intro');
+					const shm = document.getElementById('nav-shm');
+					const tie = document.getElementById('nav-tie');
+					const pulse = document.getElementById('nav-pulse');
+					[intro, shm, tie, pulse].forEach((el) => el?.classList.remove('is-active'));
+
+					const path = window.location.pathname.replace(/\/+$/, '') || '/';
+					const hash = window.location.hash;
+
+					if (path === '/') {
+						const mode = getDashboardModeFromHash(hash);
+						if (mode === 'shm') shm?.classList.add('is-active');
+						else if (mode === 'tie') tie?.classList.add('is-active');
+						else if (mode === 'pulse') pulse?.classList.add('is-active');
+						else intro?.classList.add('is-active');
+						return;
+					}
+					if (path === '/VarMonitor') {
+						if (hash === '#dev') {
+							tie?.classList.add('is-active');
+						} else if (hash === '#ops') {
+							pulse?.classList.add('is-active');
+						} else {
+							shm?.classList.add('is-active');
+						}
+					}
+				};
+
+				const mountInternalDashboardView = () => {
+					const path = window.location.pathname.replace(/\/+$/, '') || '/';
+					if (path !== '/') return;
+
+					const homeView = document.getElementById('dashboard-home-view');
+					const vmView = document.getElementById('dashboard-varmonitor-view');
+					const vmFrame = document.getElementById('dashboard-varmonitor-iframe');
+					if (!(homeView instanceof HTMLElement) || !(vmView instanceof HTMLElement) || !(vmFrame instanceof HTMLIFrameElement)) return;
+
+					const srcForMode = (mode) => {
+						if (mode === 'tie') return 'https://lorenzoadr.github.io/VarMonitor';
+						if (mode === 'pulse') return 'https://lorenzoadr.github.io/PulseIntegrity';
+						return '/VarMonitorPanel#shm';
+					};
+
+					const applyMode = (mode) => {
+						if (mode === 'intro') {
+							homeView.classList.remove('dashboard-hidden');
+							vmView.classList.add('dashboard-hidden');
+						} else {
+							homeView.classList.add('dashboard-hidden');
+							vmView.classList.remove('dashboard-hidden');
+							const nextSrc = srcForMode(mode);
+							if (vmFrame.getAttribute('src') !== nextSrc) vmFrame.setAttribute('src', nextSrc);
+						}
+						updateSidebarActive();
+					};
+
+					document.querySelectorAll('.sidebar-nav a[href^="/#"]').forEach((el) => {
+						el.addEventListener('click', (ev) => {
+							ev.preventDefault();
+							const href = el.getAttribute('href') || '/#intro';
+							const hash = href.includes('#') ? href.slice(href.indexOf('#')) : '#intro';
+							if (window.location.hash !== hash) {
+								window.history.pushState(null, '', hash);
+							}
+							applyMode(getDashboardModeFromHash(hash));
+						});
+					});
+
+					window.addEventListener('hashchange', () => applyMode(getDashboardModeFromHash(window.location.hash)));
+					applyMode(getDashboardModeFromHash(window.location.hash));
+				};
+
+				document.addEventListener('astro:page-load', mountInternalDashboardView);
+				document.addEventListener('astro:page-load', updateSidebarActive);
+				window.addEventListener('hashchange', updateSidebarActive);
+				mountInternalDashboardView();
+				updateSidebarActive();
+			})();
+		</script>
+	</body>
+</html>
+
+<style>
+	:global(*) {
+		box-sizing: border-box;
+	}
+
+	:global(html),
+	:global(body) {
+		margin: 0;
+		min-height: 100%;
+		color: #c9d1d9;
+		font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+		color-scheme: dark;
+		scrollbar-color: rgb(71 85 105) rgb(2 6 23);
+	}
+
+	:global(::-webkit-scrollbar) {
+		width: 10px;
+		height: 10px;
+	}
+
+	:global(::-webkit-scrollbar-track) {
+		background: rgb(2 6 23);
+	}
+
+	:global(::-webkit-scrollbar-thumb) {
+		background: rgb(51 65 85);
+		border: 2px solid rgb(2 6 23);
+		border-radius: 999px;
+	}
+
+	:global(::-webkit-scrollbar-thumb:hover) {
+		background: rgb(71 85 105);
+	}
+
+	#bg-spotlight {
+		background:
+			radial-gradient(54rem 32rem at 52% 34%, rgba(6, 182, 212, 0.07), transparent 72%),
+			radial-gradient(28rem 18rem at 38% 52%, rgba(34, 211, 238, 0.04), transparent 78%),
+			linear-gradient(180deg, rgba(2, 6, 23, 0.9), rgba(2, 6, 23, 1));
+	}
+
+	#bg-grain {
+		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220' viewBox='0 0 220 220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+		background-size: 220px 220px;
+		mix-blend-mode: soft-light;
+	}
+
+	.dashboard-shell {
+		display: grid;
+		grid-template-columns: 280px minmax(0, 1fr);
+		min-height: 100vh;
+	}
+
+	.dashboard-sidebar {
+		background: rgba(15, 23, 42, 0.72);
+		border-right: 1px solid #30363d;
+		padding: 20px 16px;
+		display: flex;
+		flex-direction: column;
+		gap: 20px;
+		backdrop-filter: blur(12px);
+	}
+
+	.sidebar-header {
+		border: 1px solid #30363d;
+		padding: 10px 12px;
+		border-radius: 10px;
+		background: rgba(15, 23, 42, 0.55);
+	}
+
+	.sidebar-logo {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		text-decoration: none;
+	}
+
+	.sidebar-logo-text {
+		background: linear-gradient(to right, #22d3ee, #3b82f6);
+		-webkit-background-clip: text;
+		background-clip: text;
+		color: transparent;
+		font-family: 'JetBrains Mono', 'Fira Code', ui-monospace, SFMono-Regular, Menlo, monospace;
+		font-size: 14px;
+		letter-spacing: 0.02em;
+	}
+
+	.sidebar-nav {
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+	}
+
+	.sidebar-link {
+		display: block;
+		border: 1px solid #30363d;
+		padding: 10px 12px;
+		text-decoration: none;
+		font-family: 'JetBrains Mono', 'Fira Code', ui-monospace, SFMono-Regular, Menlo, monospace;
+		font-size: 12px;
+		color: #adbac7;
+		border-radius: 10px;
+		background: rgba(15, 23, 42, 0.45);
+		transition: border-color 0.25s ease, background-color 0.25s ease, color 0.25s ease;
+	}
+
+	.sidebar-link-logo {
+		font-family: 'JetBrains Mono', 'Fira Code', ui-monospace, SFMono-Regular, Menlo, monospace;
+		font-size: 12.5px;
+		letter-spacing: 0.025em;
+		filter: saturate(1.06);
+	}
+
+	.sidebar-link-logo--ladr {
+		background: linear-gradient(to right, #22d3ee, #3b82f6);
+		-webkit-background-clip: text;
+		background-clip: text;
+		color: transparent;
+	}
+
+	.sidebar-link-logo--varmonitor {
+		background: linear-gradient(92deg, #22d3ee 0%, #60a5fa 42%, #818cf8 100%);
+		-webkit-background-clip: text;
+		background-clip: text;
+		color: transparent;
+	}
+
+	.sidebar-link-logo--pulse {
+		background: linear-gradient(92deg, #38bdf8 0%, #22d3ee 35%, #2dd4bf 100%);
+		-webkit-background-clip: text;
+		background-clip: text;
+		color: transparent;
+	}
+
+	.sidebar-link-logo--shm {
+		background: linear-gradient(92deg, #22d3ee 0%, #60a5fa 42%, #818cf8 100%);
+		-webkit-background-clip: text;
+		background-clip: text;
+		color: transparent;
+	}
+
+	.sidebar-link-suffix {
+		margin-left: 6px;
+		font-size: 11px;
+		color: #adbac7;
+	}
+
+	.sidebar-link:hover {
+		border-color: rgba(34, 211, 238, 0.35);
+		background: rgba(6, 182, 212, 0.08);
+		color: #c8f1fb;
+	}
+
+	.sidebar-link.is-active {
+		color: #f0f6fc;
+		border-color: rgba(34, 211, 238, 0.45);
+		background: rgba(6, 182, 212, 0.12);
+	}
+
+	.sidebar-contact {
+		margin-top: auto;
+		padding: 4px 2px 0;
+	}
+
+	.sidebar-contact-plain {
+		display: flex;
+		flex-direction: column;
+		gap: 6px;
+	}
+
+	.sidebar-contact-link {
+		display: inline-flex;
+		align-items: center;
+		width: fit-content;
+		padding: 0;
+		font-family: 'JetBrains Mono', 'Fira Code', ui-monospace, SFMono-Regular, Menlo, monospace;
+		font-size: 12px;
+		color: #cbd5e1;
+		text-decoration: none;
+		transition: color 0.25s ease;
+	}
+
+	.sidebar-contact-link:hover {
+		color: #bae6fd;
+	}
+
+	.sidebar-email-text {
+		overflow-wrap: anywhere;
+		font-family: 'JetBrains Mono', 'Fira Code', ui-monospace, SFMono-Regular, Menlo, monospace;
+		font-size: 11.5px;
+		color: #cbd5e1;
+	}
+
+	.status-dot {
+		width: 7px;
+		height: 7px;
+		border-radius: 999px;
+		background: #3fb950;
+		animation: blink 1.4s ease-in-out infinite;
+	}
+
+	@keyframes blink {
+		0%,
+		100% {
+			opacity: 1;
+		}
+		50% {
+			opacity: 0.35;
+		}
+	}
+
+	.dashboard-content {
+		background: transparent;
+		min-height: 100vh;
+		max-height: 100vh;
+		overflow-y: auto;
+		scrollbar-color: rgb(71 85 105) rgb(2 6 23);
+	}
+
+	@media (max-width: 960px) {
+		.dashboard-shell {
+			grid-template-columns: 1fr;
+		}
+
+		.dashboard-sidebar {
+			border-right: 0;
+			border-bottom: 1px solid #30363d;
+		}
+
+		.dashboard-content {
+			max-height: none;
+		}
+	}
+</style>

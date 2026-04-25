@@ -1,0 +1,314 @@
+---
+import '../styles/global.css';
+const title = 'SHMCore Engine Panel';
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>{title}</title>
+	</head>
+	<body class="min-h-dvh bg-slate-950 text-slate-300 antialiased">
+		<div id="bg-spotlight" aria-hidden="true" class="pointer-events-none fixed inset-0 -z-10 opacity-80"></div>
+		<div id="bg-grain" aria-hidden="true" class="pointer-events-none fixed inset-0 z-[99] opacity-[0.025]"></div>
+
+		<main class="relative z-10">
+			<section id="shm" class="relative overflow-hidden border-t border-white/5 bg-slate-950 px-6 py-24 lg:px-8 lg:py-32">
+				<div class="pointer-events-none absolute inset-0 z-0">
+					<div class="absolute left-1/2 top-0 h-[28rem] w-[54rem] -translate-x-1/2 rounded-full bg-cyan-500/10 blur-[120px]"></div>
+				</div>
+				<div class="relative z-10 mx-auto max-w-6xl">
+					<p class="mb-3 text-center font-mono text-[11px] uppercase tracking-[0.2em] text-cyan-300/90">SHMCore (Engine)</p>
+					<h2 class="text-center font-mono text-sm uppercase tracking-widest text-cyan-400/80">Architecture (low overhead)</h2>
+					<p class="mx-auto mt-4 max-w-3xl text-center text-3xl font-semibold tracking-tight text-white md:text-4xl">
+						Low-intrusion runtime insight powered by SHM, ring buffers, and efficient IPC.
+					</p>
+
+					<div class="relative mx-auto mt-14 max-w-5xl overflow-hidden rounded-2xl border border-white/10 bg-slate-900/45 p-6 shadow-2xl shadow-black/40 backdrop-blur-sm md:p-8">
+						<div class="absolute right-4 top-4 flex flex-wrap justify-end gap-2">
+							<span class="rounded-full border border-cyan-500/35 bg-cyan-500/10 px-2.5 py-1 font-mono text-[10px] uppercase tracking-wider text-cyan-300">
+								&lt; <span data-counter data-counter-target="1">0</span>ms latency
+							</span>
+							<span class="rounded-full border border-cyan-500/35 bg-cyan-500/10 px-2.5 py-1 font-mono text-[10px] uppercase tracking-wider text-cyan-300">
+								C++<span data-counter data-counter-target="20">0</span> native
+							</span>
+							<span class="rounded-full border border-cyan-500/35 bg-cyan-500/10 px-2.5 py-1 font-mono text-[10px] uppercase tracking-wider text-cyan-300">SHM zero-copy</span>
+						</div>
+						<p class="mt-8 text-center font-mono text-xs uppercase tracking-wider text-cyan-200/70 md:mt-10">
+							Deterministic performance for flight-critical control loops.
+						</p>
+
+						<div class="flex flex-col items-center gap-4 pt-10 md:hidden">
+							<button
+								type="button"
+								data-pipeline-open="cpp"
+								class="pipeline-node pipeline-node--cpp w-full max-w-xs rounded-lg border border-cyan-500/30 bg-cyan-500/10 px-4 py-4 text-center transition-all duration-200 hover:border-cyan-400/80 hover:bg-cyan-500/20 hover:shadow-[0_0_28px_rgba(34,211,238,0.35)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500/50"
+							>
+								<p class="font-mono text-xs uppercase tracking-widest text-cyan-300">C++ Core</p>
+								<p class="mt-1 font-mono text-[10px] text-cyan-200/60">Details</p>
+							</button>
+							<div class="flow-vline">
+								<span class="flow-vpulse"></span>
+							</div>
+							<button
+								type="button"
+								data-pipeline-open="shm"
+								class="pipeline-node pipeline-node--shm w-full max-w-xs rounded-xl border-2 border-dashed border-cyan-400/40 bg-gradient-to-br from-cyan-500/10 to-slate-900 px-4 py-6 text-center transition-all duration-200 hover:border-cyan-300/70 hover:bg-cyan-500/15 hover:shadow-[0_0_32px_rgba(34,211,238,0.3)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500/50"
+							>
+								<p class="font-mono text-xs font-semibold uppercase tracking-widest text-cyan-300">SHM</p>
+								<p class="mt-1 font-mono text-[10px] text-cyan-200/60">Details</p>
+							</button>
+							<div class="flow-vline flow-vline--delay">
+								<span class="flow-vpulse"></span>
+							</div>
+							<button
+								type="button"
+								data-pipeline-open="consumer"
+								class="pipeline-node pipeline-node--consumer w-full max-w-xs rounded-lg border border-violet-500/30 bg-violet-500/10 px-4 py-4 text-center transition-all duration-200 hover:border-violet-400/70 hover:bg-violet-500/20 hover:shadow-[0_0_28px_rgba(167,139,250,0.35)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-400/50"
+							>
+								<p class="font-mono text-xs uppercase tracking-widest text-violet-300">Python Consumer</p>
+								<p class="mt-1 font-mono text-[10px] text-violet-200/60">Details</p>
+							</button>
+						</div>
+
+						<div class="hidden items-center justify-between gap-3 pt-8 md:flex">
+							<button
+								type="button"
+								data-pipeline-open="cpp"
+								class="pipeline-node pipeline-node--cpp w-[30%] rounded-lg border border-cyan-500/30 bg-cyan-500/10 px-4 py-8 text-center transition-all duration-200 hover:border-cyan-400/80 hover:bg-cyan-500/20 hover:shadow-[0_0_28px_rgba(34,211,238,0.35)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500/50"
+							>
+								<p class="font-mono text-xs uppercase tracking-widest text-cyan-300">C++ Core</p>
+								<p class="mt-2 font-mono text-[10px] text-cyan-200/60">Click for details</p>
+							</button>
+							<div class="flow-hline">
+								<span class="flow-hpulse"></span>
+							</div>
+							<button
+								type="button"
+								data-pipeline-open="shm"
+								class="pipeline-node pipeline-node--shm w-[30%] rounded-xl border-2 border-dashed border-cyan-400/40 bg-gradient-to-br from-cyan-500/10 to-slate-900 px-4 py-8 text-center transition-all duration-200 hover:border-cyan-300/70 hover:bg-cyan-500/15 hover:shadow-[0_0_32px_rgba(34,211,238,0.3)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500/50"
+							>
+								<p class="font-mono text-xs uppercase tracking-widest text-cyan-300">SHM</p>
+								<p class="mt-2 font-mono text-[10px] text-cyan-200/60">Click for details</p>
+							</button>
+							<div class="flow-hline flow-hline--delay">
+								<span class="flow-hpulse"></span>
+							</div>
+							<button
+								type="button"
+								data-pipeline-open="consumer"
+								class="pipeline-node pipeline-node--consumer w-[30%] rounded-lg border border-violet-500/30 bg-violet-500/10 px-4 py-8 text-center transition-all duration-200 hover:border-violet-400/70 hover:bg-violet-500/20 hover:shadow-[0_0_28px_rgba(167,139,250,0.35)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-400/50"
+							>
+								<p class="font-mono text-xs uppercase tracking-widest text-violet-300">Python Consumer</p>
+								<p class="mt-2 font-mono text-[10px] text-violet-200/60">Click for details</p>
+							</button>
+						</div>
+					</div>
+
+					<div class="mt-10 grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-4">
+						<article class="rounded-2xl border border-slate-800/50 bg-slate-900/60 p-6 backdrop-blur-md">
+							<h3 class="font-mono text-xs uppercase tracking-widest text-cyan-300/90">Zero-Copy SHM</h3>
+							<p class="mt-3 text-sm leading-relaxed text-slate-400">
+								High-throughput data exchange with minimal copies and deterministic memory access patterns for runtime observability.
+							</p>
+						</article>
+						<article class="rounded-2xl border border-cyan-400/35 bg-slate-900/60 p-6 shadow-[0_0_24px_rgba(34,211,238,0.12)] backdrop-blur-md">
+							<h3 class="font-mono text-xs uppercase tracking-widest text-cyan-300/90">UDS Control Plane</h3>
+							<p class="mt-3 text-sm leading-relaxed text-slate-300">
+								Unix Domain Sockets for low-latency command/control paths, complementing SHM bulk transport cleanly.
+							</p>
+						</article>
+						<article class="rounded-2xl border border-slate-800/50 bg-slate-900/60 p-6 backdrop-blur-md">
+							<h3 class="font-mono text-xs uppercase tracking-widest text-cyan-300/90">Ring Buffer Efficiency</h3>
+							<p class="mt-3 text-sm leading-relaxed text-slate-400">
+								Event buffering with bounded memory and stable timing behavior under bursty telemetry conditions.
+							</p>
+						</article>
+						<article class="rounded-2xl border border-slate-800/50 bg-slate-900/60 p-6 backdrop-blur-md">
+							<h3 class="font-mono text-xs uppercase tracking-widest text-cyan-300/90">Deterministic Runtime</h3>
+							<p class="mt-3 text-sm leading-relaxed text-slate-400">
+								Architecture optimized for predictable latency and repeatable behavior across development and operations.
+							</p>
+						</article>
+					</div>
+				</div>
+			</section>
+		</main>
+
+		<div id="pipeline-drawer-root" class="pointer-events-none fixed inset-0 z-[100] hidden" aria-hidden="true">
+			<div class="pipeline-drawer-backdrop absolute inset-0 z-0 bg-slate-950/70 opacity-0 backdrop-blur-[2px] transition-opacity duration-300" data-pipeline-drawer-close></div>
+			<aside
+				id="pipeline-drawer-panel"
+				class="pipeline-drawer-panel absolute inset-y-0 right-0 z-10 flex h-full w-full max-w-lg flex-col border-l border-cyan-500/30 bg-slate-900/95 shadow-2xl shadow-cyan-950/40 backdrop-blur-md transition-transform duration-300 ease-out"
+				role="dialog"
+				aria-modal="true"
+				aria-labelledby="pipeline-drawer-title"
+			>
+				<div class="flex items-center justify-between border-b border-white/5 px-5 py-4">
+					<h2 id="pipeline-drawer-title" class="font-mono text-sm font-semibold uppercase tracking-widest text-cyan-300">Pipeline</h2>
+					<button type="button" class="rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 font-mono text-xs text-slate-300 transition hover:border-cyan-500/40 hover:text-cyan-200" data-pipeline-drawer-close>Close</button>
+				</div>
+				<div class="min-h-0 flex-1 overflow-y-auto px-5 py-5">
+					<div data-pipeline-panel="cpp" class="hidden space-y-4 text-sm leading-relaxed text-slate-400">
+						<p class="text-base font-semibold text-white">C++ Core</p>
+						<p>VarMonitor integrates into your C++ runtime with a low-intrusion publisher path focused on stable timing and predictable behavior under load.</p>
+						<p>Critical state updates are coordinated so readers consume coherent snapshots, while write paths avoid extra copies whenever possible.</p>
+					</div>
+					<div data-pipeline-panel="shm" class="hidden space-y-4 text-sm leading-relaxed text-slate-400">
+						<p class="text-base font-semibold text-white">Shared memory (SHM)</p>
+						<p>SHM carries bulk runtime data with minimal overhead, while control metadata uses UDS. This split keeps latency low and avoids socket-heavy sample transport.</p>
+						<p>The layout keeps per-variable state explicit, including ring metadata where needed, so bursty signals do not block the rest of the monitored set.</p>
+					</div>
+					<div data-pipeline-panel="consumer" class="hidden space-y-4 text-sm leading-relaxed text-slate-400">
+						<p class="text-base font-semibold text-white">Python consumer</p>
+						<p>A <strong class="text-slate-200">FastAPI</strong> backend bridges native runtime data to the browser through WebSocket without exposing direct host access to every operator.</p>
+						<p>Live streams feed dashboards, replay tools, and control actions in one session so teams can debug, validate, and report from the same interface.</p>
+					</div>
+				</div>
+			</aside>
+		</div>
+	</body>
+</html>
+
+<style is:global>
+	#bg-spotlight {
+		background:
+			radial-gradient(54rem 32rem at 52% 34%, rgba(6, 182, 212, 0.07), transparent 72%),
+			radial-gradient(28rem 18rem at 38% 52%, rgba(34, 211, 238, 0.04), transparent 78%),
+			linear-gradient(180deg, rgba(2, 6, 23, 0.9), rgba(2, 6, 23, 1));
+	}
+
+	#bg-grain {
+		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220' viewBox='0 0 220 220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+		background-size: 220px 220px;
+		mix-blend-mode: soft-light;
+	}
+
+	.flow-hline {
+		position: relative;
+		height: 2px;
+		flex: 1;
+		border-radius: 999px;
+		background: linear-gradient(to right, rgba(34, 211, 238, 0.2), rgba(34, 211, 238, 0.75), rgba(34, 211, 238, 0.2));
+	}
+
+	.flow-hline--delay .flow-hpulse { animation-delay: 1.2s; }
+
+	.flow-hpulse {
+		position: absolute;
+		top: 50%;
+		left: 0;
+		height: 8px;
+		width: 8px;
+		translate: -50% -50%;
+		border-radius: 999px;
+		background: rgb(34 211 238 / 1);
+		box-shadow: 0 0 18px rgba(34, 211, 238, 0.9);
+		animation: flow-h 2.6s ease-in-out infinite;
+	}
+
+	.flow-vline {
+		position: relative;
+		height: 48px;
+		width: 2px;
+		border-radius: 999px;
+		background: linear-gradient(to bottom, rgba(34, 211, 238, 0.2), rgba(34, 211, 238, 0.75), rgba(34, 211, 238, 0.2));
+	}
+
+	.flow-vline--delay .flow-vpulse { animation-delay: 1.3s; }
+
+	.flow-vpulse {
+		position: absolute;
+		left: 50%;
+		top: 0;
+		height: 8px;
+		width: 8px;
+		translate: -50% -50%;
+		border-radius: 999px;
+		background: rgb(34 211 238 / 1);
+		box-shadow: 0 0 18px rgba(34, 211, 238, 0.9);
+		animation: flow-v 2.6s ease-in-out infinite;
+	}
+
+	@keyframes flow-h {
+		0% { left: 0%; opacity: 0; }
+		10% { opacity: 1; }
+		90% { opacity: 1; }
+		100% { left: 100%; opacity: 0; }
+	}
+
+	@keyframes flow-v {
+		0% { top: 0%; opacity: 0; }
+		10% { opacity: 1; }
+		90% { opacity: 1; }
+		100% { top: 100%; opacity: 0; }
+	}
+
+	.pipeline-drawer-backdrop { opacity: 0; transition: opacity 300ms ease; }
+	.pipeline-drawer-panel { transform: translate3d(100%, 0, 0); }
+	#pipeline-drawer-root.pipeline-drawer--open { pointer-events: auto; }
+	#pipeline-drawer-root.pipeline-drawer--open .pipeline-drawer-backdrop { opacity: 1; }
+	#pipeline-drawer-root.pipeline-drawer--open .pipeline-drawer-panel { transform: translate3d(0, 0, 0); }
+</style>
+
+<script is:inline>
+	(() => {
+		const counters = Array.from(document.querySelectorAll('[data-counter]'));
+		const animateCounter = (el) => {
+			const target = Number(el.getAttribute('data-counter-target') || '0');
+			const duration = 1200;
+			const startTime = performance.now();
+			const step = (now) => {
+				const progress = Math.min((now - startTime) / duration, 1);
+				const eased = 1 - Math.pow(1 - progress, 3);
+				el.textContent = String(Math.round(target * eased));
+				if (progress < 1) requestAnimationFrame(step);
+			};
+			requestAnimationFrame(step);
+		};
+		counters.forEach((counter) => animateCounter(counter));
+
+		const drawerRoot = document.getElementById('pipeline-drawer-root');
+		const drawerAside = document.getElementById('pipeline-drawer-panel');
+		const drawerTitleEl = document.getElementById('pipeline-drawer-title');
+		const panelEls = document.querySelectorAll('[data-pipeline-panel]');
+		const drawerTitles = { cpp: 'C++ Core', shm: 'Shared memory', consumer: 'Python consumer' };
+		let drawerCloseTimer = 0;
+
+		const closeDrawer = () => {
+			if (!drawerRoot) return;
+			drawerRoot.classList.remove('pipeline-drawer--open');
+			drawerRoot.setAttribute('aria-hidden', 'true');
+			document.body.style.overflow = '';
+			window.clearTimeout(drawerCloseTimer);
+			drawerCloseTimer = window.setTimeout(() => drawerRoot.classList.add('hidden'), 320);
+		};
+
+		const openDrawer = (id) => {
+			if (!drawerRoot || !drawerAside) return;
+			panelEls.forEach((panel) => {
+				panel.classList.toggle('hidden', panel.getAttribute('data-pipeline-panel') !== id);
+			});
+			if (drawerTitleEl && drawerTitles[id]) drawerTitleEl.textContent = drawerTitles[id];
+			drawerRoot.classList.remove('hidden');
+			drawerRoot.setAttribute('aria-hidden', 'false');
+			document.body.style.overflow = 'hidden';
+			requestAnimationFrame(() => drawerRoot.classList.add('pipeline-drawer--open'));
+			const closeBtn = drawerAside.querySelector('[data-pipeline-drawer-close]');
+			if (closeBtn instanceof HTMLElement) closeBtn.focus();
+		};
+
+		document.querySelectorAll('[data-pipeline-open]').forEach((btn) => {
+			btn.addEventListener('click', () => {
+				const id = btn.getAttribute('data-pipeline-open');
+				if (id) openDrawer(id);
+			});
+		});
+		document.querySelectorAll('[data-pipeline-drawer-close]').forEach((el) => el.addEventListener('click', closeDrawer));
+		document.addEventListener('keydown', (e) => {
+			if (e.key === 'Escape' && drawerRoot?.classList.contains('pipeline-drawer--open')) closeDrawer();
+		});
+	})();
+</script>
