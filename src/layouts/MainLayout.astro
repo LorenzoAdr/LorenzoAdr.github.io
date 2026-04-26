@@ -28,6 +28,12 @@ const {
 	<body class="min-h-dvh bg-slate-950 text-slate-300 antialiased selection:bg-cyan-500/20 selection:text-cyan-100">
 		<div id="bg-spotlight" aria-hidden="true" class="pointer-events-none fixed inset-0 -z-10 opacity-80"></div>
 		<div id="bg-grain" aria-hidden="true" class="pointer-events-none fixed inset-0 z-[1] opacity-[0.025]"></div>
+		<header class="mobile-topbar">
+			<button type="button" id="mobile-menu-toggle" class="mobile-menu-btn" aria-expanded="false" aria-controls="mobile-drawer">
+				Menu
+			</button>
+			<span class="mobile-topbar-title">Dashboard</span>
+		</header>
 		<div class="dashboard-shell relative z-10">
 			<aside class="dashboard-sidebar" transition:persist>
 				<div class="sidebar-header">
@@ -65,7 +71,36 @@ const {
 			</aside>
 			<main class="dashboard-content">
 				<slot />
+				<footer class="mobile-contact-footer">
+					<div class="mobile-contact-plain">
+						<a href="https://es.linkedin.com/in/lorenzo-arias-del-real" target="_blank" rel="noopener noreferrer" class="sidebar-contact-link">LinkedIn</a>
+						<a href="https://github.com/LorenzoAdr" target="_blank" rel="noopener noreferrer" class="sidebar-contact-link">GitHub</a>
+						<span class="sidebar-email-text">lorenzo.adr@proton.me</span>
+					</div>
+				</footer>
 			</main>
+		</div>
+		<div id="mobile-drawer-root" class="mobile-drawer-root" aria-hidden="true">
+			<div id="mobile-drawer-backdrop" class="mobile-drawer-backdrop"></div>
+			<aside id="mobile-drawer" class="mobile-drawer" aria-label="Mobile navigation">
+				<nav class="mobile-drawer-nav">
+					<a id="m-nav-intro" href="/#intro" class="sidebar-link">
+						<span class="sidebar-link-logo sidebar-link-logo--ladr"><span class="font-bold">L</span><span class="font-light">ADR</span></span>
+					</a>
+					<a id="m-nav-shm" href="/#shm" class="sidebar-link">
+						<span class="sidebar-link-logo sidebar-link-logo--shm"><span class="font-bold">SHM</span><span class="font-light">Core</span></span>
+						<span class="sidebar-link-suffix">(Engine)</span>
+					</a>
+					<a id="m-nav-tie" href="/#tie" class="sidebar-link">
+						<span class="sidebar-link-logo sidebar-link-logo--varmonitor"><span class="font-bold">VAR</span><span class="font-light">MONITOR</span></span>
+						<span class="sidebar-link-suffix">(DEV)</span>
+					</a>
+					<a id="m-nav-pulse" href="/#pulse" class="sidebar-link">
+						<span class="sidebar-link-logo sidebar-link-logo--pulse"><span class="font-semibold">PULSE</span><span class="font-light">INTEGRITY</span></span>
+						<span class="sidebar-link-suffix">(OPS)</span>
+					</a>
+				</nav>
+			</aside>
 		</div>
 		<script is:inline>
 			(() => {
@@ -81,26 +116,30 @@ const {
 					const shm = document.getElementById('nav-shm');
 					const tie = document.getElementById('nav-tie');
 					const pulse = document.getElementById('nav-pulse');
-					[intro, shm, tie, pulse].forEach((el) => el?.classList.remove('is-active'));
+					const mIntro = document.getElementById('m-nav-intro');
+					const mShm = document.getElementById('m-nav-shm');
+					const mTie = document.getElementById('m-nav-tie');
+					const mPulse = document.getElementById('m-nav-pulse');
+					[intro, shm, tie, pulse, mIntro, mShm, mTie, mPulse].forEach((el) => el?.classList.remove('is-active'));
 
 					const path = window.location.pathname.replace(/\/+$/, '') || '/';
 					const hash = window.location.hash;
 
 					if (path === '/') {
 						const mode = getDashboardModeFromHash(hash);
-						if (mode === 'shm') shm?.classList.add('is-active');
-						else if (mode === 'tie') tie?.classList.add('is-active');
-						else if (mode === 'pulse') pulse?.classList.add('is-active');
-						else intro?.classList.add('is-active');
+						if (mode === 'shm') { shm?.classList.add('is-active'); mShm?.classList.add('is-active'); }
+						else if (mode === 'tie') { tie?.classList.add('is-active'); mTie?.classList.add('is-active'); }
+						else if (mode === 'pulse') { pulse?.classList.add('is-active'); mPulse?.classList.add('is-active'); }
+						else { intro?.classList.add('is-active'); mIntro?.classList.add('is-active'); }
 						return;
 					}
 					if (path === '/VarMonitor') {
 						if (hash === '#dev') {
-							tie?.classList.add('is-active');
+							tie?.classList.add('is-active'); mTie?.classList.add('is-active');
 						} else if (hash === '#ops') {
-							pulse?.classList.add('is-active');
+							pulse?.classList.add('is-active'); mPulse?.classList.add('is-active');
 						} else {
-							shm?.classList.add('is-active');
+							shm?.classList.add('is-active'); mShm?.classList.add('is-active');
 						}
 					}
 				};
@@ -133,21 +172,60 @@ const {
 						updateSidebarActive();
 					};
 
+					const applyFromNav = (el, ev) => {
+						ev.preventDefault();
+						const href = el.getAttribute('href') || '/#intro';
+						const hash = href.includes('#') ? href.slice(href.indexOf('#')) : '#intro';
+						if (window.location.hash !== hash) {
+							window.history.pushState(null, '', hash);
+						}
+						applyMode(getDashboardModeFromHash(hash));
+						closeMobileDrawer();
+					};
+
 					document.querySelectorAll('.sidebar-nav a[href^="/#"]').forEach((el) => {
 						el.addEventListener('click', (ev) => {
-							ev.preventDefault();
-							const href = el.getAttribute('href') || '/#intro';
-							const hash = href.includes('#') ? href.slice(href.indexOf('#')) : '#intro';
-							if (window.location.hash !== hash) {
-								window.history.pushState(null, '', hash);
-							}
-							applyMode(getDashboardModeFromHash(hash));
+							applyFromNav(el, ev);
+						});
+					});
+					document.querySelectorAll('.mobile-drawer-nav a[href^="/#"]').forEach((el) => {
+						el.addEventListener('click', (ev) => {
+							applyFromNav(el, ev);
 						});
 					});
 
 					window.addEventListener('hashchange', () => applyMode(getDashboardModeFromHash(window.location.hash)));
 					applyMode(getDashboardModeFromHash(window.location.hash));
 				};
+
+				const drawerRoot = document.getElementById('mobile-drawer-root');
+				const drawer = document.getElementById('mobile-drawer');
+				const drawerBackdrop = document.getElementById('mobile-drawer-backdrop');
+				const drawerToggle = document.getElementById('mobile-menu-toggle');
+				const openMobileDrawer = () => {
+					if (!drawerRoot || !drawer || !drawerToggle) return;
+					drawerRoot.classList.add('is-open');
+					drawerRoot.setAttribute('aria-hidden', 'false');
+					drawerToggle.setAttribute('aria-expanded', 'true');
+					document.body.style.overflow = 'hidden';
+				};
+				const closeMobileDrawer = () => {
+					if (!drawerRoot || !drawerToggle) return;
+					drawerRoot.classList.remove('is-open');
+					drawerRoot.setAttribute('aria-hidden', 'true');
+					drawerToggle.setAttribute('aria-expanded', 'false');
+					document.body.style.overflow = '';
+				};
+				if (drawerToggle) {
+					drawerToggle.addEventListener('click', () => {
+						if (drawerRoot?.classList.contains('is-open')) closeMobileDrawer();
+						else openMobileDrawer();
+					});
+				}
+				drawerBackdrop?.addEventListener('click', closeMobileDrawer);
+				document.addEventListener('keydown', (e) => {
+					if (e.key === 'Escape') closeMobileDrawer();
+				});
 
 				document.addEventListener('astro:page-load', mountInternalDashboardView);
 				document.addEventListener('astro:page-load', updateSidebarActive);
@@ -210,6 +288,10 @@ const {
 		display: grid;
 		grid-template-columns: 280px minmax(0, 1fr);
 		min-height: 100vh;
+	}
+
+	.mobile-topbar {
+		display: none;
 	}
 
 	.dashboard-sidebar {
@@ -378,18 +460,119 @@ const {
 		scrollbar-color: rgb(71 85 105) rgb(2 6 23);
 	}
 
+	.mobile-contact-footer {
+		display: none;
+	}
+
+	.mobile-drawer-root {
+		display: none;
+	}
+
 	@media (max-width: 960px) {
+		.mobile-topbar {
+			position: sticky;
+			top: 0;
+			z-index: 40;
+			display: flex;
+			align-items: center;
+			gap: 12px;
+			height: 56px;
+			padding: 0 14px;
+			border-bottom: 1px solid #30363d;
+			background: rgba(15, 23, 42, 0.82);
+			backdrop-filter: blur(10px);
+		}
+
+		.mobile-menu-btn {
+			border: 1px solid #30363d;
+			border-radius: 8px;
+			padding: 6px 10px;
+			background: rgba(2, 6, 23, 0.6);
+			color: #cbd5e1;
+			font: 11px/1.2 'JetBrains Mono', 'Fira Code', ui-monospace, monospace;
+		}
+
+		.mobile-topbar-title {
+			font: 12px/1.2 'JetBrains Mono', 'Fira Code', ui-monospace, monospace;
+			letter-spacing: 0.08em;
+			text-transform: uppercase;
+			color: #94a3b8;
+		}
+
 		.dashboard-shell {
 			grid-template-columns: 1fr;
+			min-height: calc(100vh - 56px);
 		}
 
 		.dashboard-sidebar {
-			border-right: 0;
-			border-bottom: 1px solid #30363d;
+			display: none;
 		}
 
 		.dashboard-content {
+			min-height: calc(100vh - 56px);
 			max-height: none;
+		}
+
+		.mobile-contact-footer {
+			display: block;
+			margin: 18px 14px 26px;
+			padding-top: 10px;
+			border-top: 1px solid rgb(51 65 85 / 0.45);
+		}
+
+		.mobile-contact-plain {
+			display: flex;
+			flex-direction: column;
+			gap: 8px;
+		}
+
+		.mobile-drawer-root {
+			display: block;
+			position: fixed;
+			inset: 0;
+			z-index: 50;
+			pointer-events: none;
+		}
+
+		.mobile-drawer-backdrop {
+			position: absolute;
+			inset: 0;
+			background: rgba(2, 6, 23, 0.72);
+			opacity: 0;
+			transition: opacity 0.2s ease;
+		}
+
+		.mobile-drawer {
+			position: absolute;
+			top: 0;
+			left: 0;
+			height: 100%;
+			width: min(82vw, 320px);
+			padding: 16px 12px;
+			background: rgba(15, 23, 42, 0.96);
+			border-right: 1px solid #30363d;
+			backdrop-filter: blur(12px);
+			transform: translateX(-100%);
+			transition: transform 0.22s ease;
+		}
+
+		.mobile-drawer-nav {
+			display: flex;
+			flex-direction: column;
+			gap: 8px;
+			padding-top: 8px;
+		}
+
+		.mobile-drawer-root.is-open {
+			pointer-events: auto;
+		}
+
+		.mobile-drawer-root.is-open .mobile-drawer-backdrop {
+			opacity: 1;
+		}
+
+		.mobile-drawer-root.is-open .mobile-drawer {
+			transform: translateX(0);
 		}
 	}
 </style>
