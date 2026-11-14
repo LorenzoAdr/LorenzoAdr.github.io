@@ -93,3 +93,25 @@ export function ogCard() {
 		`<text x="62" y="196" fill="${t.ink2}" style="font:500 24px ${MONO}">Senior Flight Simulation Engineer · Real-time C++</text>` +
 		`<g transform="translate(60 250)">${inner}</g></svg>`;
 }
+
+/** LinkedIn banner on the light sheet, drawn as a wide plate. 1584×396 units; export at 2× or 4×. */
+export function bannerLight({ grid = false, labels = true } = {}) {
+	const W = 1584, H = 396, t = THEMES.light, pad = labels ? { l: 0, r: 0, t: 64, b: 70 } : { l: 0, r: 0, t: 46, b: 46 };
+	const X = (v) => (W * v) / 140, y0 = pad.t, y1 = H - pad.b;
+	let g = '';
+	if (grid) {
+		for (let v = 10; v <= 130; v += 10) g += `<path class="fg-grid" d="M${f1(X(v))} 0V${H}"/>`;
+		for (let k = 0; k <= 4; k++) g += `<path class="fg-grid" d="M0 ${f1(y0 + ((y1 - y0) * k) / 4)}H${W}"/>`;
+	}
+	if (labels) for (const v of [40, 60, 80, 100, 120]) g += `<text class="bn-tick" text-anchor="middle" x="${f1(X(v))}" y="${H - 26}">${v}</text>`;
+	const inner = cloud({ ...PANELS[0], range: [3.2, 12.5], seed: 31 }, { w: W, h: H, pad, n: 620, radius: 3.1, bare: true });
+	const extra = `.fg-grid{stroke-width:1;stroke-dasharray:3 6;opacity:.75}.bn-tick{fill:${t.ink2};font:13px ${MONO}}.bn-cap{fill:${t.ink2};font:13px ${MONO};letter-spacing:1.5px}.bn-title{fill:${t.ink};font:500 15px ${MONO};letter-spacing:2px}`;
+	return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}"><style>${css(t, 1.7)}${extra}</style>` +
+		`<rect width="${W}" height="${H}" fill="${t.sheet}"/>${g}${inner}` +
+		`<rect x="0.5" y="0.5" width="${W - 1}" height="${H - 1}" fill="none" stroke="${t.rule}"/>` +
+		(labels ? `<text class="bn-title" text-anchor="end" x="${W - 36}" y="38">LEVEL-FLIGHT TRIM · COLLECTIVE AGAINST AIRSPEED</text>` +
+			`<circle class="fg-flight" cx="40" cy="33" r="4"/><text class="bn-cap" x="52" y="38">FLIGHT</text>` +
+			`<circle class="fg-model" cx="140" cy="33" r="4"/><text class="bn-cap" x="152" y="38">MODEL</text>` +
+			`<text class="bn-cap" x="236" y="38">SYNTHETIC DATA</text>` +
+			`<text class="bn-cap" text-anchor="end" x="${W - 36}" y="${H - 26}">IAS [kt]</text>` : '') + `</svg>`;
+}
