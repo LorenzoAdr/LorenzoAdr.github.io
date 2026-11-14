@@ -1,0 +1,35 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+
+const REPO = 'https://github.com/LorenzoAdr/TIDE';
+const guides = (await getCollection('tuideDocs')).sort((a, b) => a.data.order - b.data.order);
+const nav = [
+	{ href: '/tuide/', label: 'tuide' },
+	{ href: '/tuide/docs/', label: 'Docs', current: true },
+	{ href: REPO, label: 'GitHub' },
+];
+---
+<BaseLayout title="tuide documentation | Lorenzo Arias" description="Guides for tuide, a terminal IDE for C++ and twelve more languages: usage, shortcuts, architecture and development." crumb="TUIDE / DOCS" nav={nav}>
+	<div class="wrap">
+		<section class="doc-hero">
+			<p class="label">tuide · documentation</p>
+			<h1>Documentation</h1>
+			<p class="lede">How to use tuide, how it is built and how to work on it. The same guides live in the repository under <a href={`${REPO}/tree/main/docs`}>docs/</a>.</p>
+		</section>
+		<section class="block">
+			<header><p class="label">Read</p><h2>Guides</h2></header>
+			<div class="body">
+				<div class="rows">
+					{guides.map((g) => (
+						<article class="row">
+							<p class="mono">{String(g.data.order).padStart(2, '0')}</p>
+							<h3><a href={`/tuide/docs/${g.id}/`}>{g.data.title}</a></h3>
+							<p class="desc">{g.data.summary}</p>
+						</article>
+					))}
+				</div>
+			</div>
+		</section>
+	</div>
+</BaseLayout>

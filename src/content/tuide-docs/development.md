@@ -1,0 +1,313 @@
+---
+title: "Development guide"
+summary: "Build, project layout and conventions for contributors."
+order: 4
+source: "https://github.com/LorenzoAdr/TIDE/blob/main/docs/development.md"
+commit: "1ef1230"
+updated: "2026-09-28"
+---
+## Prerequisites
+
+Same as the [user guide](/tuide/docs/user-guide/#requirements), plus:
+
+- `git`
+- `nproc` (optional, used by `tools/compile.sh` for parallel jobs)
+
+## Building
+
+### Standard build
+
+```bash
+cmake -S . -B build
+cmake --build build -j$(nproc)
+```
+
+CMake exports `compile_commands.json` in the build directory (`CMAKE_EXPORT_COMPILE_COMMANDS ON`). Symlink or copy it to the project root if you use clangd locally:
+
+```bash
+ln -sf build/compile_commands.json .
+```
+
+### Helper scripts
+
+| Script | Purpose |
+|--------|---------|
+| `tools/compile.sh` | Configure and build (direct; optional bundle TUI with `--wizard`) |
+| `tools/build-portable.sh` | Docker build with old glibc; respects `.bundle-config` (`--slim` = no bundles) |
+| `tools/pregenerate-tree-sitter-latex.sh` | Host-side `parser.c` for bionic (glibc 2.27) portable builds |
+| `tools/build-release-appimage.sh` | Official slim AppImage (glibc 2.27) → `dist/tuide-$VERSION.AppImage` |
+| `tools/verify-glibc.sh` | Report max GLIBC/GLIBCXX symbols and `ldd` deps |
+| `tools/launch.sh` | Run `tuide` with sensible defaults and path resolution |
+
+`compile.sh` without arguments builds directly using `.bundle-config` (or defaults). The legacy TUI to choose embedded components is still available with `--wizard`. Toolpacks are normally installed at runtime from GitHub Releases.
+
+```bash
+./tools/compile.sh                      # direct build (.bundle-config / defaults)
+./tools/compile.sh --wizard             # TUI: choose bundles (legacy)
+./tools/compile.sh --bundle-clangd      # embed official clangd (Linux x86_64)
+./tools/compile.sh --no-bundle-clangd   # slim binary (~53 MB)
+./tools/compile.sh --bundle-gdb         # embed gdb + Core Analyzer
+./tools/compile.sh --help
+```
+
+When `TUIDE_BUNDLE_CLANGD=ON`, the build downloads the official [clangd/clangd](https://github.com/clangd/clangd/releases) Linux x86_64 release, strips it, compresses it, and embeds it in `tuide` (+~35 MB compressed). At runtime the blob is extracted once to `$XDG_CACHE_HOME/tuide/bundled/clangd-<version>/`.
+
+When `TUIDE_BUNDLE_GDB=ON`, choose the bundled gdb kind at compile time:
+
+| `TUIDE_GDB_BUNDLE_KIND` | Runtime | Core Analyzer UI |
+|------------------------|---------|------------------|
+| `static` | gdb-static (musl, no deps) | disabled |
+| `core_analyzer` | GDB 16.3 + CA (dynamic deps) | enabled |
+
+Use `./tools/compile.sh` (TUI wizard) or flags:
+
+```bash
+./tools/compile.sh --bundle-gdb-static -y   # portable gdb, no CA
+./tools/compile.sh --bundle-gdb-ca -y       # gdb + Core Analyzer
+./tools/compile.sh --no-bundle-gdb -y       # system gdb on PATH
+```
+
+Static bundle downloads [gdb-static Full](https://github.com/guyush1/gdb-static/releases). Core Analyzer bundle uses a cached tarball or `-DTUIDE_BUILD_GDB_CA=ON` / `docker/Dockerfile.gdb-ca`. Runtime extraction: `$XDG_CACHE_HOME/tuide/bundled/gdb-<version>/`.
+
+Native gdb+CA build requires dev packages (Debian/Ubuntu):
+
+```bash
+sudo apt install libgmp-dev libmpfr-dev libmpc-dev
+```
+
+Python tooling can be embedded the same way (Linux x86_64). Choose **one** of:
+
+| CMake option | Contents | Runtime |
+|--------------|----------|---------|
+| `TUIDE_BUNDLE_PYTHON_LSP_MIN` (A) | basedpyright + Node wheel | needs host `python3`; no embedded debugpy |
+| `TUIDE_BUNDLE_PYTHON_TOOLS` (B) | portable CPython + basedpyright + debugpy | self-contained LSP + DAP |
+
+B supersedes A if both are set. Blobs extract to `$XDG_CACHE_HOME/tuide/bundled/python-tools-<version>/`.
+
+```bash
+./tools/compile.sh --bundle-python-lsp-min -y   # A
+./tools/compile.sh --bundle-python-tools -y     # B
+./tools/compile.sh --no-bundle-python -y        # PATH / venv only
+```
+
+Bash and LaTeX language servers can be embedded independently (Linux x86_64):
+
+| CMake option | Contents | Runtime |
+|--------------|----------|---------|
+| `TUIDE_BUNDLE_BASH_LS` | bash-language-server + Node | LSP for shell scripts |
+| `TUIDE_BUNDLE_TEXLAB` | TexLab release binary | LSP for LaTeX |
+| `TUIDE_BUNDLE_BASH_DAP` | bash-debug adapter + bashdb (+ Node unless BASH_LS) | DAP for shell scripts |
+| `TUIDE_BUNDLE_YAML_LS` | yaml-language-server + Node | LSP for YAML |
+
+Bash DAP still requires a host `bash` (and typically `bashdb` on PATH if not fully bundled). Node is shared with the Bash LS / YAML LS bundles when enabled.
+
+```bash
+./tools/compile.sh --bundle-bash-ls -y
+./tools/compile.sh --bundle-texlab -y
+./tools/compile.sh --bundle-bash-dap -y
+./tools/compile.sh --bundle-yaml-ls -y
+./tools/compile.sh --no-bundle-bash-ls --no-bundle-texlab --no-bundle-bash-dap --no-bundle-yaml-ls -y
+```
+
+Build-time tools (when bundling): `curl` or `wget`, `zstd`, `objcopy`, `sha256sum`; for clangd also `unzip`, `strip`, `ldd`; for option A also host `python3` (venv + pip); for Bash LS / Bash DAP also host `npm` (unless sources are prebuilt).
+
+### Install (no build)
+
+`tools/install.sh` only copies an existing `build/tuide` to `/usr/opt/tuide` and adds the `tuide` alias to `~/.bashrc`. Compile first with `tools/compile.sh`.
+
+### Portable build (legacy glibc)
+
+Building on a modern host (e.g. Ubuntu 24.04) pins `tuide` to a recent glibc (e.g. `GLIBC_2.38`). To ship a binary that runs on older distros, use the Docker-based portable build.
+
+From the legacy **compilation TUI** (`./tools/compile.sh --wizard`), cycle **Compilación / Build** to:
+
+- `host` — local toolchain
+- `Docker (glibc 2.31 / Ubuntu 20.04)` — default portable baseline
+- `Docker (glibc 2.27 / Ubuntu 18.04)` — older baseline
+
+Optional checkbox: **static libstdc++**. Bundle checkboxes (LSP/DAP/…) are applied inside the container via `.bundle-config`.
+
+CLI equivalents:
+
+```bash
+./tools/compile.sh --wizard             # TUI → pick Docker backend + bundles
+./tools/compile.sh --build-backend=docker_focal
+./tools/build-portable.sh               # same; reuses .bundle-config
+./tools/build-portable.sh --static-libstdc++
+./tools/build-portable.sh --bionic      # Ubuntu 18.04 / glibc ~2.27
+./tools/verify-glibc.sh build/tuide
+```
+
+Output lands in `dist/tuide-x86_64-glibc<version>[-static-libstdc++]` plus `dist/portable-report.txt`.
+
+Runtime requirements (example with embedded clangd + gdb):
+
+| Component | Dynamic deps at runtime | Typical glibc floor |
+|-----------|------------------------|---------------------|
+| `tuide` | `libc`, `libm`, optional `libstdc++`/`libgcc_s` | Set by Docker image (~2.31 focal, ~2.27 bionic) |
+| Embedded clangd | `libc`, `libm`, `libpthread`, `librt`, `libdl` | **≥ 2.18** (official LLVM release) |
+| Embedded gdb-static | none (musl static) | none |
+| Embedded gdb + Core Analyzer | depends on build | varies |
+
+`--static-libstdc++` (wizard checkbox / `compile.sh` / `build-portable.sh`) removes the `libstdc++.so.6` runtime dependency from `tuide`; glibc is still required from the host.
+
+Requires Docker. Inside the container, `compile.sh -y --build-backend=host` runs so nested Docker delegation cannot recurse.
+
+If `docker info` fails with **permission denied** on `/var/run/docker.sock`, the script asks interactively whether to retry with `sudo docker` for that run (`--sudo-docker` / `TUIDE_DOCKER_SUDO=1` skips the prompt; `--no-sudo-docker` refuses sudo).
+
+Environment variables:
+
+| Variable | Effect |
+|----------|--------|
+| `JOBS` | Parallel build jobs for `compile.sh` (default: `nproc`) |
+| `CLANGD_PATH` | Override path to clangd binary (highest priority) |
+| `GDB_PATH` | Override path to gdb binary (highest priority) |
+| `BASEDPYRIGHT_PATH` | Override path to basedpyright / pyright language server (highest priority) |
+| `PYRIGHT_LANGSERVER_PATH` | Alternate override for the Python language server binary |
+| `BASH_LANGUAGE_SERVER_PATH` | Override path to bash-language-server |
+| `TEXLAB_PATH` | Override path to texlab |
+| `DEBUGPY_PYTHON` | Python interpreter used to run `python -m debugpy.adapter` |
+| `PYTHON` | Fallback interpreter probed for the `debugpy` module |
+| `TUIDE_FORCE_BUNDLED_PYTHON_TOOLS` | `1`/`0` override for preferring the embedded Python tools blob |
+
+Without an embedded Python blob (and without basedpyright on `PATH`), `.py` files still get tree-sitter syntax highlighting; completions/diagnostics/hover require the language server. Option A still needs a host `python3` to run the extracted langserver. Option B embeds CPython and debugpy for DAP.
+
+Shell (`.sh`, `.bash`), LaTeX (`.tex`, `.sty`, `.cls`), and YAML (`.yaml`, `.yml`) use
+tree-sitter for syntax highlighting and outline; LSP completions/diagnostics/hover require
+optional language servers on `PATH` (or env overrides):
+
+```bash
+npm install -g bash-language-server   # Node.js; binary: bash-language-server
+# or: export BASH_LANGUAGE_SERVER_PATH=/path/to/bash-language-server
+
+# TexLab: download a release binary from https://github.com/latex-lsp/texlab/releases
+# and put `texlab` on PATH, or:
+export TEXLAB_PATH=/path/to/texlab
+
+npm install -g yaml-language-server   # or: export TUIDE_YAML_LS=/path/to/yaml-language-server
+# embed with: ./tools/compile.sh --bundle-yaml-ls -y
+```
+
+Install basedpyright/debugpy on the host only when not bundling:
+
+```bash
+python3 -m venv ~/.venvs/tuide-tools
+~/.venvs/tuide-tools/bin/pip install basedpyright debugpy
+export PATH="$HOME/.venvs/tuide-tools/bin:$PATH"
+# or: export BASEDPYRIGHT_PATH=$HOME/.venvs/tuide-tools/bin/basedpyright-langserver
+```
+| `TUIDE_FORCE_BUNDLED_CLANGD` | `1` = use only embedded clangd; `0` = allow `PATH` fallback |
+| `TUIDE_FORCE_BUNDLED_GDB` | `1` = use only embedded gdb; `0` = allow `PATH` fallback |
+| `TUIDE_UI_SMOKE` | Headless UI smoke test (exits quickly, no fullscreen) |
+
+### Running tests
+
+```bash
+cmake --build build --target text_ops_test
+./build/text_ops_test
+```
+
+`text_ops_test` covers editor text operations (insert, delete, search, undo).
+
+## Project layout
+
+```
+tuide/
+├── CMakeLists.txt          # Main build definition
+├── cmake/
+│   └── Dependencies.cmake  # FetchContent: FTXUI, cppdap, json
+├── docs/                   # Documentation (this folder)
+├── examples/
+│   ├── hello.cpp           # Sample C++ debug target
+│   ├── hello.py            # Sample Python debug target
+│   ├── hello.rs / .go / …  # Other language samples
+│   └── protocols/          # Packet-monitor protocol JSON
+├── src/
+│   ├── main.cpp            # Entry point, CLI parsing
+│   ├── app/                # Application orchestration
+│   ├── backend/            # Debug backend (DAP)
+│   ├── dap/                # GDB launcher
+│   ├── editor/             # Text editor core
+│   ├── indexer/            # Workspace indexing
+│   ├── lsp/                # LSP client
+│   ├── search/             # Project-wide search
+│   ├── symbols/            # Symbol providers
+│   ├── terminal/           # Shell PTY
+│   ├── ui/                 # FTXUI panels and modals
+│   ├── util/               # Shared utilities
+│   └── toolpacks/          # Toolpack store/resolve/CLI (clangd pilot)
+├── tests/
+│   └── text_ops_test.cpp
+└── tools/
+    ├── compile.sh
+    ├── build-portable.sh
+    ├── verify-glibc.sh
+    └── launch.sh
+```
+
+## Adding a UI panel
+
+1. Create `src/ui/my_panel.hpp` and `.cpp`
+2. Implement `ftxui::Component MakeMyPanel(...)` following existing panels
+3. Wire into `MakeMainLayout` in `src/ui/main_layout.cpp`
+4. Add focus region in `FocusManagerState` if the panel needs keyboard focus
+5. Register the `.cpp` file in `CMakeLists.txt`
+
+Use `MakePanel()` from `ui/panel.hpp` for consistent title/body chrome. Colours come from `ui/theme.hpp`.
+
+## Adding a debug command
+
+1. Add a value to `UiCommandKind` in `src/backend/idebug_backend.hpp`
+2. Handle it in `DapBackend::handle_command()`
+3. Emit `DebugEvent` responses as needed
+4. Call from UI via `CommandCallback` / `submit_command()`
+
+Keep all `DebugModel` mutations on the UI thread.
+
+## Key conventions
+
+- **C++17**, no extensions beyond the standard
+- **Namespace:** `tuide`
+- **UI strings:** use `i18n::tr("key")` / `i18n::tr_fmt("key", {args})`; catalogs in `src/i18n/strings_es.cpp` and `strings_en.cpp` (generated from `tools/i18n_generate.py` + `tools/i18n_catalog_extra.py`). Do not add user-facing literals in UI code.
+- **Locale:** `AppSettings::ui_locale` (`auto` / `es` / `en`); selector in F10 settings. Auto reads `$LANG`.
+- **Thread safety:** background threads push to `ThreadSafeQueue`; UI drains on `Event::Custom`
+- **Paths:** normalize with `util/path_normalize.hpp`; store absolute paths in models
+- **Modals:** implement as overlays (`MakeXOverlay`) with a `*State` struct and `open` flag; register in `Application::any_modal_open()`
+
+## Internationalization (i18n)
+
+- **API:** `i18n::tr("dotted.key")`, `i18n::tr_fmt("key", {"arg0"})` — placeholders `{0}`, `{1}`, …
+- **Keys:** stable dot-notation (`panel.explorer.title`, `settings.general.lsp.label`, `cli.opt.cwd`)
+- **Catalogs:** edit `tools/i18n_catalog_extra.py` (and base entries in `tools/i18n_generate.py`), then run:
+
+```bash
+python3 tools/i18n_generate.py
+```
+
+- **Audit:** `./tools/i18n_audit.sh` — grep for stray literals before merging UI changes
+- **Tests:** `build/i18n_test`
+
+## Debugging tuide itself
+
+Run under GDB:
+
+```bash
+gdb --args ./build/tuide --cwd . ./build/hello
+```
+
+Crash backtraces are printed via `util/crash_handler.cpp` (`-rdynamic` enabled on Unix).
+
+For UI issues, the status bar shows the active focus region (`[Editor]`, `[Terminal]`, …).
+
+## Dependency versions
+
+Pinned in `cmake/Dependencies.cmake`:
+
+- FTXUI: `v6.1.9`
+- cppdap: `main` (shallow clone)
+- nlohmann/json: `v3.11.3`
+
+## See also
+
+- [Architecture](/tuide/docs/architecture/)
+- [Keyboard shortcuts](/tuide/docs/keyboard-shortcuts/)

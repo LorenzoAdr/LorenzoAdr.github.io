@@ -11,7 +11,8 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "figures": "node scripts/export-figures.mjs"
+    "figures": "node scripts/export-figures.mjs",
+    "docs:tuide": "node scripts/sync-tuide-docs.mjs"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.2",

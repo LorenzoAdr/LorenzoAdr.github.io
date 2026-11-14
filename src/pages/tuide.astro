@@ -2,12 +2,12 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 
 const REPO = 'https://github.com/LorenzoAdr/TIDE';
-const DOCS = `${REPO}/blob/main/docs`;
+const DOCS = '/tuide/docs';
 const nav = [
 	{ href: '#features', label: 'Features' },
 	{ href: '#languages', label: 'Languages' },
 	{ href: '#install', label: 'Install' },
-	{ href: `${DOCS}/README.md`, label: 'Docs' },
+	{ href: `${DOCS}/`, label: 'Docs' },
 	{ href: REPO, label: 'GitHub' },
 ];
 
@@ -37,10 +37,11 @@ const languages = [
 ];
 
 const guides = [
-	{ href: `${DOCS}/user-guide.md`, name: 'User guide', text: 'Workflows, CLI, languages, IDE and debug modes, troubleshooting.' },
-	{ href: `${DOCS}/keyboard-shortcuts.md`, name: 'Keyboard shortcuts', text: 'Complete key binding reference. F1 opens it inside tuide.' },
-	{ href: `${DOCS}/architecture.md`, name: 'Architecture', text: 'Threads, DAP, multi-LSP and UI structure.' },
-	{ href: `${DOCS}/development.md`, name: 'Development', text: 'Build, project layout and contributing.' },
+	{ href: `${DOCS}/user-guide/`, name: 'User guide', text: 'Workflows, CLI, languages, IDE and debug modes, troubleshooting.' },
+	{ href: `${DOCS}/keyboard-shortcuts/`, name: 'Keyboard shortcuts', text: 'Complete key binding reference. F1 opens it inside tuide.' },
+	{ href: `${DOCS}/architecture/`, name: 'Architecture', text: 'Threads, DAP, multi-LSP and UI structure.' },
+	{ href: `${DOCS}/development/`, name: 'Development', text: 'Build, project layout and contributing.' },
+	{ href: `${DOCS}/toolpacks/`, name: 'Toolpacks', text: 'Language packs, catalog, CLI and AppImage export.' },
 ];
 
 ---

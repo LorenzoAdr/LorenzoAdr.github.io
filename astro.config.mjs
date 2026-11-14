@@ -9,6 +9,8 @@ export default defineConfig({
 	base: '/',
 	integrations: [sitemap()],
 	output: 'static',
+	// Documentation is styled as a plain engineering document: no syntax colouring.
+	markdown: { syntaxHighlight: false },
 	build: {
 		inlineStylesheets: 'always',
 	},

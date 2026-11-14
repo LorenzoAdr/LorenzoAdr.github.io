@@ -31,6 +31,14 @@ npm run figures
 
 Writes the figure as SVG and PNG, light and dark, plus the LinkedIn banner to `downloads/`, and the social card to `public/`.
 
+## tuide documentation
+
+```bash
+npm run docs:tuide
+```
+
+Pulls the guides from `docs/` in the TIDE repository into `src/content/tuide-docs/` and rewrites links between them to `/tuide/docs/<guide>/`. Run it when the guides change upstream and commit the result. Text diagrams use the system mono font plus a Fira Mono subset (`public/fonts/diagram-mono.woff2`, SIL OFL) for box-drawing characters and arrows, which IBM Plex Mono does not cover.
+
 ## Design rules
 
 One accent colour, used for the model trace and the active state only. Square corners, hairlines, no shadows, no gradients, no entrance animations. Left-aligned with a margin column for labels and dates. Figures carry a numbered caption and state that their data is synthetic.

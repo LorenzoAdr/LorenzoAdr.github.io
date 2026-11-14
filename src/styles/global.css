@@ -7,6 +7,9 @@
 @import '@fontsource/ibm-plex-mono/400.css';
 @import '@fontsource/ibm-plex-mono/500.css';
 
+/* Box drawing, arrows and maths for text diagrams: Fira Mono subset (SIL OFL, /fonts/diagram-mono-OFL.txt), same 0.6em advance as Plex Mono. */
+@font-face { font-family: 'Diagram Mono'; src: url('/fonts/diagram-mono.woff2') format('woff2'); font-display: swap; unicode-range: U+2190-21FF, U+2200-22FF, U+2500-25FF; }
+
 /* Engineering-document system: square corners, hairlines, one accent, left-aligned with a margin column. */
 *, *::before, *::after { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
@@ -113,3 +116,57 @@ svg.diagram { width: 100%; min-width: 600px; height: auto; }
 .steps li { counter-increment: step; display: grid; grid-template-columns: 32px minmax(0, 1fr); padding-block: 10px; border-bottom: 1px solid var(--rule); color: var(--ink-2); font-size: 0.95rem; }
 .steps li::before { content: counter(step); font: 600 1.4rem/1.1 var(--font-display); color: var(--trace); }
 .steps b { color: var(--ink); font-weight: 600; }
+
+/* Documentation pages (tuide guides rendered from Markdown) */
+.doc-hero { padding-block: 48px 40px; }
+.doc-hero h1 { font-size: clamp(2.6rem, 6vw, 4.4rem); margin-top: 6px; }
+.doc-hero .lede { margin-top: 14px; color: var(--ink-2); max-width: 60ch; }
+.doc-hero .lede a { color: var(--ink); }
+.doc-page { display: grid; grid-template-columns: 190px minmax(0, 1fr); gap: 40px; padding-block: 36px 64px; align-items: start; }
+.doc-side { position: sticky; top: 20px; max-height: calc(100vh - 40px); overflow-y: auto; font: 400 0.8rem/1.45 var(--font-mono); }
+.doc-side .label { margin-bottom: 8px; }
+.doc-side ol + .label { margin-top: 28px; }
+.doc-nav, .doc-toc { border-top: 1px solid var(--rule); }
+.doc-nav li a, .doc-toc li a { display: block; padding: 6px 0 6px 10px; border-bottom: 1px solid var(--rule); border-left: 2px solid transparent; color: var(--ink-2); text-decoration: none; }
+.doc-nav li a:hover, .doc-toc li a:hover { color: var(--trace); }
+.doc-nav li a[aria-current='page'] { color: var(--ink); border-left-color: var(--trace); font-weight: 500; }
+.doc-toc li a { font-size: 0.74rem; padding-block: 4px; }
+.doc { min-width: 0; max-width: 780px; }
+.doc-head { border-bottom: 1px solid var(--ink); padding-bottom: 16px; margin-bottom: 8px; }
+.doc-head h1 { font-size: clamp(2.2rem, 5vw, 3.4rem); margin-block: 6px 10px; }
+.doc-body { font-size: 0.97rem; line-height: 1.65; }
+.doc-body > * + * { margin-top: 14px; }
+.doc-body h2 { font-size: 1.7rem; border-top: 1px solid var(--ink); padding-top: 12px; margin-top: 44px; scroll-margin-top: 16px; }
+.doc-body h3 { font-size: 1.25rem; margin-top: 30px; scroll-margin-top: 16px; }
+.doc-body h4 { font: 500 0.76rem var(--font-mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-2); margin-top: 24px; }
+.doc-body p, .doc-body li { max-width: var(--measure); }
+.doc-body ul, .doc-body ol { padding-left: 1.3em; }
+.doc-body ul { list-style: square; }
+.doc-body ol { list-style: decimal; }
+.doc-body li + li { margin-top: 4px; }
+.doc-body li::marker { color: var(--trace); }
+.doc-body a { color: var(--ink); text-decoration-color: var(--rule); }
+.doc-body a:hover { color: var(--trace); text-decoration-color: var(--trace); }
+.doc-body strong { font-weight: 600; }
+.doc-body :not(pre) > code { font: 400 0.84em var(--font-mono); background: var(--band); padding: 0.05em 0.3em; }
+.doc-body pre { background: var(--sheet); border: 1px solid var(--rule); border-left: 2px solid var(--ink); color: var(--ink); font: 400 0.8rem/1.45 var(--font-mono); padding: 14px 16px; overflow-x: auto; tab-size: 4; }
+.doc-body pre code { font: inherit; }
+.doc-body table { display: block; overflow-x: auto; border-collapse: collapse; font-size: 0.88rem; border-top: 1px solid var(--ink); }
+.doc-body th { font: 500 0.7rem var(--font-mono); letter-spacing: 0.06em; text-transform: uppercase; text-align: left; color: var(--ink-2); padding: 7px 16px 7px 0; border-bottom: 1px solid var(--ink); white-space: nowrap; }
+.doc-body td { padding: 7px 16px 7px 0; border-bottom: 1px solid var(--rule); vertical-align: top; }
+.doc-body td code { white-space: nowrap; }
+.doc-body blockquote { border-left: 2px solid var(--trace); padding-left: 14px; color: var(--ink-2); }
+.doc-body hr { border: 0; border-top: 1px solid var(--rule); }
+.doc-body img { border: 1px solid var(--rule); }
+.doc-foot { margin-top: 56px; border-top: 1px solid var(--ink); padding-top: 14px; display: grid; gap: 18px; }
+.doc-pager { display: flex; justify-content: space-between; gap: 16px; }
+.doc-pager a { display: flex; flex-direction: column; gap: 2px; text-decoration: none; font: 600 1.15rem var(--font-display); text-transform: uppercase; letter-spacing: 0.02em; }
+.doc-pager a.next { text-align: right; margin-left: auto; }
+.doc-pager a:hover { color: var(--trace); }
+.doc-foot .mono a { color: inherit; }
+@media (max-width: 860px) {
+	.doc-page { grid-template-columns: 1fr; gap: 24px; padding-top: 24px; }
+	.doc-side { position: static; max-height: none; }
+	.doc-toc, .doc-side ol + .label { display: none; }
+}
+.doc-body > h2:first-child { border-top: 0; padding-top: 0; margin-top: 28px; }
