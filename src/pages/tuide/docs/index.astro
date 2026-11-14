@@ -2,7 +2,7 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 
-const REPO = 'https://github.com/LorenzoAdr/TIDE';
+const REPO = 'https://github.com/LorenzoAdr/tuide';
 const guides = (await getCollection('tuideDocs')).sort((a, b) => a.data.order - b.data.order);
 const nav = [
 	{ href: '/tuide/', label: 'tuide' },
@@ -10,7 +10,7 @@ const nav = [
 	{ href: REPO, label: 'GitHub' },
 ];
 ---
-<BaseLayout title="tuide documentation | Lorenzo Arias" description="Guides for tuide, a terminal IDE for C++ and twelve more languages: usage, shortcuts, architecture and development." crumb="TUIDE / DOCS" nav={nav}>
+<BaseLayout title="tuide documentation | Lorenzo Arias" description="Guides for tuide, a terminal IDE for C++ and twelve more languages: usage, shortcuts, architecture and development." crumb="TUIDE / DOCS" nav={nav} image="/media/tuide-og.jpg">
 	<div class="wrap">
 		<section class="doc-hero">
 			<p class="label">tuide · documentation</p>

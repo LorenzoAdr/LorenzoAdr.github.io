@@ -1,11 +1,11 @@
-// Pulls the tuide guides from the TIDE repository into src/content/tuide-docs/,
+// Pulls the tuide guides from the tuide repository into src/content/tuide-docs/,
 // so the site serves them as web pages at /tuide/docs/<slug>/.
 // Run with `npm run docs:tuide` after the docs change upstream, then commit the result.
 // Links between published guides become site links; any other relative link points to GitHub.
 import { mkdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 
-const OWNER_REPO = 'LorenzoAdr/TIDE';
+const OWNER_REPO = 'LorenzoAdr/tuide';
 const BRANCH = process.env.TUIDE_BRANCH ?? 'main';
 const RAW = `https://raw.githubusercontent.com/${OWNER_REPO}/${BRANCH}`;
 const BLOB = `https://github.com/${OWNER_REPO}/blob/${BRANCH}`;

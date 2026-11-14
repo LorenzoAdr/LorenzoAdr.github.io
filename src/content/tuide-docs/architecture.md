@@ -2,8 +2,8 @@
 title: "Architecture"
 summary: "Threads, models, DAP and multi-LSP integration, UI structure."
 order: 3
-source: "https://github.com/LorenzoAdr/TIDE/blob/main/docs/architecture.md"
-commit: "29a0136"
+source: "https://github.com/LorenzoAdr/tuide/blob/main/docs/architecture.md"
+commit: "e372c7b"
 updated: "2026-11-14"
 ---
 ## High-level overview
@@ -236,7 +236,7 @@ Runtime: optional language servers (LSP) and debug adapters (GDB / debugpy / bas
 
 ## Planned: panel dirty cache + ANSI busy strip
 
-Two separate systems (see [plan](https://github.com/LorenzoAdr/TIDE/blob/main/docs/plans/panel-invalidation-wake-system.md)):
+Two separate systems (see [plan](https://github.com/LorenzoAdr/tuide/blob/main/docs/plans/panel-invalidation-wake-system.md)):
 
 1. **Declarative panel dirty + Element cache** (FileTree / Editor / Sidebar / Console) — fewer rebuilds on legitimate FTXUI wakes (e.g. editor scroll).
 2. **Busy strip** (Braille or `%` + label) **outside** that dirty path — ANSI only, no status wake/2 Hz.
@@ -247,4 +247,4 @@ Status chrome keeps focus + toolbar buttons and drops the app name.
 
 - [Development guide](/tuide/docs/development/)
 - [User guide](/tuide/docs/user-guide/)
-- [Panel invalidation plan](https://github.com/LorenzoAdr/TIDE/blob/main/docs/plans/panel-invalidation-wake-system.md)
+- [Panel invalidation plan](https://github.com/LorenzoAdr/tuide/blob/main/docs/plans/panel-invalidation-wake-system.md)

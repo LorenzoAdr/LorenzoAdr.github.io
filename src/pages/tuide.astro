@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 
-const REPO = 'https://github.com/LorenzoAdr/TIDE';
+const REPO = 'https://github.com/LorenzoAdr/tuide';
 const DOCS = '/tuide/docs';
 const nav = [
 	{ href: '#features', label: 'Features' },
@@ -51,6 +51,7 @@ const guides = [
 	description="tuide is a terminal IDE with multi-language indexing over LSP, debugging over DAP, an embedded terminal and binary forensics, in 20–30 MB of RAM."
 	crumb="tuide"
 	nav={nav}
+	image="/media/tuide-og.jpg"
 >
 	<section class="wrap project-hero">
 		<div>
@@ -169,7 +170,7 @@ const guides = [
 chmod +x tuide-*.AppImage
 ./tuide-*.AppImage</pre>
 				<p class="prose">To build from source you need Linux, CMake 3.20 or later and a C++17 compiler. GDB 14 or later with DAP is optional, for native debugging.</p>
-				<pre class="code">git clone https://github.com/LorenzoAdr/TIDE.git && cd TIDE
+				<pre class="code">git clone https://github.com/LorenzoAdr/tuide.git && cd tuide
 ./tools/compile.sh
 ./tools/launch.sh</pre>
 				<pre class="code"><span class="c"># open a workspace, edit, debug with F2</span>

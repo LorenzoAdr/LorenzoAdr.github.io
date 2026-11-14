@@ -37,7 +37,7 @@ Writes the figure as SVG and PNG, light and dark, plus the LinkedIn banner to `d
 npm run docs:tuide
 ```
 
-Pulls the guides from `docs/` in the TIDE repository into `src/content/tuide-docs/` and rewrites links between them to `/tuide/docs/<guide>/`. Run it when the guides change upstream and commit the result. Text diagrams use the system mono font plus a Fira Mono subset (`public/fonts/diagram-mono.woff2`, SIL OFL) for box-drawing characters and arrows, which IBM Plex Mono does not cover.
+Pulls the guides from `docs/` in the tuide repository into `src/content/tuide-docs/` and rewrites links between them to `/tuide/docs/<guide>/`. Run it when the guides change upstream and commit the result. Text diagrams use the system mono font plus a Fira Mono subset (`public/fonts/diagram-mono.woff2`, SIL OFL) for box-drawing characters and arrows, which IBM Plex Mono does not cover.
 
 ## Design rules
 

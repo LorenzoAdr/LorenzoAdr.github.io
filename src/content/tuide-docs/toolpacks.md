@@ -2,8 +2,8 @@
 title: "Toolpacks"
 summary: "Language packs, catalog, CLI and AppImage export."
 order: 5
-source: "https://github.com/LorenzoAdr/TIDE/blob/main/docs/toolpacks.md"
-commit: "29a0136"
+source: "https://github.com/LorenzoAdr/tuide/blob/main/docs/toolpacks.md"
+commit: "e372c7b"
 updated: "2026-11-14"
 ---
 Toolpacks are versioned LSP/DAP tool payloads installed in user space and resolved
@@ -40,7 +40,7 @@ Bundled (AppImage) root: `TUIDE_TOOLPACKS_BUNDLED` (read-only).
 
 - Tags: `catalog-YYYY.MM.DD` + movable `catalog-latest`
 - Assets: `catalog.json`, one `*-linux-x86_64.tar.zst` and/or `*-linux-aarch64.tar.zst` per toolpack, `SHA256SUMS`
-- Default: `https://github.com/LorenzoAdr/TIDE/releases/download/catalog-latest/catalog.json`
+- Default: `https://github.com/LorenzoAdr/tuide/releases/download/catalog-latest/catalog.json`
 - Override: `TUIDE_TOOLPACKS_CATALOG_URL` (HTTP, `file://`, or absolute path)
 - The AppImage/client picks the catalog entry whose `arch` matches the host (`x86_64` or `aarch64`)
 

@@ -10,14 +10,14 @@ export async function getStaticPaths() {
 const { entry, guides, prev, next } = Astro.props;
 const { Content, headings } = await render(entry);
 const toc = headings.filter((h) => h.depth === 2);
-const REPO = 'https://github.com/LorenzoAdr/TIDE';
+const REPO = 'https://github.com/LorenzoAdr/tuide';
 const nav = [
 	{ href: '/tuide/', label: 'tuide' },
 	{ href: '/tuide/docs/', label: 'Docs' },
 	{ href: REPO, label: 'GitHub' },
 ];
 ---
-<BaseLayout title={`${entry.data.title} | tuide docs`} description={entry.data.summary} crumb="TUIDE / DOCS" nav={nav}>
+<BaseLayout title={`${entry.data.title} | tuide docs`} description={entry.data.summary} crumb="TUIDE / DOCS" nav={nav} image="/media/tuide-og.jpg">
 	<div class="wrap doc-page">
 		<aside class="doc-side" aria-label="Documentation">
 			<p class="label">Guides</p>

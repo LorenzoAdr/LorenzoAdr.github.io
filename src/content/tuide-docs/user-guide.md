@@ -2,8 +2,8 @@
 title: "User guide"
 summary: "Workflows, CLI, languages, IDE and debug modes, troubleshooting."
 order: 1
-source: "https://github.com/LorenzoAdr/TIDE/blob/main/docs/user-guide.md"
-commit: "29a0136"
+source: "https://github.com/LorenzoAdr/tuide/blob/main/docs/user-guide.md"
+commit: "e372c7b"
 updated: "2026-11-14"
 ---
 ## Overview
@@ -93,7 +93,7 @@ When built with embedded tools, open **F10 → Configuración** to force bundled
 
 Portable full pack for older hosts: `./tools/build-portable.sh` (glibc ~2.31 on Ubuntu 20.04; `--bionic` for ~2.27). Embedded clangd needs **glibc ≥ 2.18**.
 
-**Official core AppImage** (no embedded LSP/DAP): download `tuide-$VERSION.AppImage` from [GitHub Releases](https://github.com/LorenzoAdr/TIDE/releases) (tags `v*`, glibc ≥ 2.27). Then install language packs from **F10 → Toolpacks**.
+**Official core AppImage** (no embedded LSP/DAP): download `tuide-$VERSION.AppImage` from [GitHub Releases](https://github.com/LorenzoAdr/tuide/releases) (tags `v*`, glibc ≥ 2.27). Then install language packs from **F10 → Toolpacks**.
 
 ### Cargar core dumps
 

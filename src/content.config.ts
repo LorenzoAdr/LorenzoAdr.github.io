@@ -2,7 +2,7 @@ import { defineCollection } from 'astro:content';
 import { glob } from 'astro/loaders';
 import { z } from 'astro/zod';
 
-// Guides synced from the TIDE repository by scripts/sync-tuide-docs.mjs.
+// Guides synced from the tuide repository by scripts/sync-tuide-docs.mjs.
 const tuideDocs = defineCollection({
 	loader: glob({ pattern: '*.md', base: './src/content/tuide-docs' }),
 	schema: z.object({
