@@ -3,8 +3,8 @@ title: "Toolpacks"
 summary: "Language packs, catalog, CLI and AppImage export."
 order: 5
 source: "https://github.com/LorenzoAdr/TIDE/blob/main/docs/toolpacks.md"
-commit: "1ef1230"
-updated: "2026-09-28"
+commit: "29a0136"
+updated: "2026-11-14"
 ---
 Toolpacks are versioned LSP/DAP tool payloads installed in user space and resolved
 at runtime. The IDE **core** (including Tree-sitter and **rg**) ships without them.

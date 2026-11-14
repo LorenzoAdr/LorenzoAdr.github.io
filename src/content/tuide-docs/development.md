@@ -3,8 +3,8 @@ title: "Development guide"
 summary: "Build, project layout and conventions for contributors."
 order: 4
 source: "https://github.com/LorenzoAdr/TIDE/blob/main/docs/development.md"
-commit: "1ef1230"
-updated: "2026-09-28"
+commit: "29a0136"
+updated: "2026-11-14"
 ---
 ## Prerequisites
 

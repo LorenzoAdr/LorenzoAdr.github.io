@@ -3,8 +3,8 @@ title: "Keyboard shortcuts"
 summary: "Complete key binding reference. F1 opens it inside tuide."
 order: 2
 source: "https://github.com/LorenzoAdr/TIDE/blob/main/docs/keyboard-shortcuts.md"
-commit: "1ef1230"
-updated: "2026-09-28"
+commit: "29a0136"
+updated: "2026-11-14"
 ---
 Press **F1** inside tuide to open the in-app shortcuts dialog (scrollable). This page is the full reference.
 

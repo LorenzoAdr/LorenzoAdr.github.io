@@ -3,8 +3,8 @@ title: "Architecture"
 summary: "Threads, models, DAP and multi-LSP integration, UI structure."
 order: 3
 source: "https://github.com/LorenzoAdr/TIDE/blob/main/docs/architecture.md"
-commit: "1ef1230"
-updated: "2026-09-28"
+commit: "29a0136"
+updated: "2026-11-14"
 ---
 ## High-level overview
 
@@ -14,16 +14,16 @@ updated: "2026-09-28"
 │  Application ── MainLayout ── panels ── modals              │
 │       │              │                                      │
 │  DebugModel    WorkspaceModel    FocusManager               │
-└───────┬──────────────┬────────────────────────────────────┘
+└───────┬──────────────┬──────────────────────────────────────┘
         │              │
         │  UiCommand   │  file events
         ▼              ▼
-┌───────────────┐  ┌────────────────┐  ┌──────────────────────────┐
-│  DAP thread   │  │ Indexer threads│  │  Language servers (LSP)  │
-│  DapBackend   │  │ WorkspaceIndexer│  │  LspClient × N (stdio)   │
-│  cppdap ↔     │  │ SymbolIndexer  │  │  clangd / basedpyright / │
-│  GDB|debugpy  │  └────────────────┘  │  rust-analyzer / gopls…  │
-└───────────────┘                      └──────────────────────────┘
+┌───────────────┐  ┌──────────────────┐  ┌──────────────────────────┐
+│  DAP thread   │  │ Indexer threads  │  │  Language servers (LSP)  │
+│  DapBackend   │  │ WorkspaceIndexer │  │  LspClient × N (stdio)   │
+│  cppdap ↔     │  │ SymbolIndexer    │  │  clangd / basedpyright / │
+│  GDB|debugpy  │  └──────────────────┘  │  rust-analyzer / gopls…  │
+└───────────────┘                        └──────────────────────────┘
 ```
 
 All UI state lives on a single FTXUI thread. Background workers communicate through thread-safe queues or callbacks posted back to the UI loop via `Event::Custom`.
@@ -138,7 +138,8 @@ In `kNormal` mode the bottom panel hosts a real interactive shell (bash) over a 
 │       ▼                              ▼                       │
 │  ShellSession ◄── keystrokes ── event_to_pty_bytes()         │
 │       │                                                      │
-│  output_chunks_ (ThreadSafeQueue)                            │
+│       ├── output_chunks_ (ThreadSafeQueue)                   │
+│       │                                                      │
 └───────┼──────────────────────────────────────────────────────┘
         │ reader thread
         ▼

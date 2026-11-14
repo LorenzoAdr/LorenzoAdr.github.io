@@ -3,8 +3,8 @@ title: "User guide"
 summary: "Workflows, CLI, languages, IDE and debug modes, troubleshooting."
 order: 1
 source: "https://github.com/LorenzoAdr/TIDE/blob/main/docs/user-guide.md"
-commit: "1ef1230"
-updated: "2026-09-28"
+commit: "29a0136"
+updated: "2026-11-14"
 ---
 ## Overview
 
