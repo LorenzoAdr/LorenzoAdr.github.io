@@ -1,0 +1,24 @@
+/* Design tokens shared by lorenzoadr.github.io and its project pages.
+   Other repos link this file: <link rel="stylesheet" href="https://lorenzoadr.github.io/ui/tokens.css"> */
+:root {
+	--ground: #edf0f2;
+	--sheet: #f9fafb;
+	--ink: #101c2b;
+	--ink-2: #4b5969;
+	--rule: #b7c1cb;
+	--band: #dce2e7;
+	--trace: #a8156f;
+	--font-display: 'Barlow Condensed', 'Arial Narrow', sans-serif;
+	--font-text: 'IBM Plex Sans', system-ui, sans-serif;
+	--font-mono: 'IBM Plex Mono', ui-monospace, Menlo, monospace;
+	--measure: 66ch;
+	--page: 1080px;
+	--margin-col: 150px;
+	color-scheme: light;
+}
+/* Light is the default for every visitor. Dark is opt-in with data-theme="dark" on <html>. */
+:root[data-theme='dark'] {
+	--ground: #0b131c; --sheet: #111b26; --ink: #e3e9ef; --ink-2: #94a2b1;
+	--rule: #2d3b4a; --band: #1a2633; --trace: #f062b6;
+	color-scheme: dark;
+}

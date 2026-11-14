@@ -1,0 +1,60 @@
+---
+import '../styles/global.css';
+interface Props {
+	title?: string;
+	description?: string;
+	/** Project name shown after the owner's name in the bar, on project pages. */
+	crumb?: string;
+	nav?: { href: string; label: string; current?: boolean }[];
+}
+const {
+	title = 'Lorenzo Arias del Real | Flight simulation engineer',
+	description = 'Senior flight simulation engineer: flight dynamics, flight control systems and simulator qualification. Open-source tools for real-time C++ systems.',
+	crumb,
+	nav = [
+		{ href: '#experience', label: 'Experience' },
+		{ href: '#projects', label: 'Projects' },
+		{ href: '#contact', label: 'Contact' },
+	],
+} = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const og = new URL('/og-card.png', Astro.site);
+---
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>{title}</title>
+		<meta name="description" content={description} />
+		<link rel="canonical" href={canonical} />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta property="og:type" content="website" />
+		<meta property="og:title" content={title} />
+		<meta property="og:description" content={description} />
+		<meta property="og:url" content={canonical} />
+		<meta property="og:image" content={og} />
+		<meta name="twitter:card" content="summary_large_image" />
+		<meta name="theme-color" content="#edf0f2" />
+		<meta name="color-scheme" content="light" />
+		<meta name="generator" content={Astro.generator} />
+	</head>
+	<body>
+		<a class="skip" href="#main">Skip to content</a>
+		<header class="site-bar">
+			<div class="wrap">
+				<span><a href="/"><b>LORENZO ARIAS</b></a>{crumb && <span class="crumb"> / {crumb}</span>}</span>
+				<nav aria-label="Primary">
+					{nav.map((n) => <a href={n.href} aria-current={n.current ? 'page' : undefined}>{n.label}</a>)}
+				</nav>
+			</div>
+		</header>
+		<main id="main"><slot /></main>
+		<footer class="site-foot">
+			<div class="wrap">
+				<span>© {new Date().getFullYear()} Lorenzo Arias del Real</span>
+				<span>Figures on this site use synthetic data.</span>
+			</div>
+		</footer>
+	</body>
+</html>

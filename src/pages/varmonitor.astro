@@ -1,0 +1,157 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const REPO = 'https://github.com/LorenzoAdr/RealTimeMonitor';
+const DOCS = '/VarMonitor/docs/en';
+const nav = [
+	{ href: '#features', label: 'Features' },
+	{ href: '#data-path', label: 'Data path' },
+	{ href: '#integrate', label: 'Integrate' },
+	{ href: `${DOCS}/`, label: 'Docs' },
+	{ href: REPO, label: 'GitHub' },
+];
+
+const features = [
+	{ area: 'Watch', name: 'Live monitor', text: 'Browse the variables your process registers, pick the ones you care about and see their values update in the browser. Only monitored names are sent, at a rate you control.' },
+	{ area: 'Plot', name: 'Time series', text: 'Drag variables into plots, arrange panels and export images. Per-variable ring buffers keep high-rate signals intact between browser updates.' },
+	{ area: 'Record', name: 'Recording and replay', text: 'Record to disk with a native sidecar process, then load a session to replay and analyse it offline.' },
+	{ area: 'Alert', name: 'Alarms', text: 'Set thresholds on variables. The sidecar evaluates them next to the data, independently of who is watching.' },
+	{ area: 'Act', name: 'Set values', text: 'Write a variable from the browser to test how the system responds, through the same control channel used to read it.' },
+	{ area: 'Deploy', name: 'Runs where you need it', text: 'Launch scripts, a Docker image for the web backend and a packaged single executable for targets without pip.' },
+];
+
+const guides = [
+	{ href: `${DOCS}/setup.html`, name: 'Installation', text: 'Requirements, quick install and configuration file.' },
+	{ href: `${DOCS}/cpp-integration.html`, name: 'C++ integration', text: 'Linking libvarmonitor, basic usage and macros.' },
+	{ href: `${DOCS}/architecture.html`, name: 'Architecture', text: 'Components, data flow, instance discovery, visual and internal rates.' },
+	{ href: `${DOCS}/protocols.html`, name: 'Protocols', text: 'UDS message format, commands, shared memory layout and semaphores.' },
+	{ href: `${DOCS}/performance.html`, name: 'Performance', text: 'Skip-unchanged, slicing, async publish and recording optimisations.' },
+	{ href: `${DOCS}/docker.html`, name: 'Docker', text: 'Container image, bridge and host modes.' },
+];
+---
+
+<BaseLayout
+	title="VarMonitor | Real-time variable monitor for C++"
+	description="VarMonitor links a C++20 process to a browser: live values, plots, alarms and recording over shared memory, with no TCP on the data path."
+	crumb="VarMonitor"
+	nav={nav}
+>
+	<section class="wrap project-hero">
+		<div>
+			<p class="label">Open source · Apache-2.0</p>
+			<h1>See inside a running C++ process.</h1>
+			<p class="lede">
+				VarMonitor links a C++20 application to a browser-based control room: live values, time-series plots, alarms and disk recording.
+				Your application embeds a small library and the data travels over shared memory, with no TCP on the data path.
+			</p>
+			<table class="spec">
+				<tr><th scope="row">Data path</th><td>POSIX shared memory, per-variable rings</td></tr>
+				<tr><th scope="row">Control</th><td>Unix domain sockets, length-prefixed JSON</td></tr>
+				<tr><th scope="row">Library</th><td>libvarmonitor, C++20, CMake</td></tr>
+				<tr><th scope="row">Backend</th><td>Python, FastAPI, WebSocket</td></tr>
+				<tr><th scope="row">Platform</th><td>Linux</td></tr>
+			</table>
+			<p class="actions">
+				<a class="primary" href={`${DOCS}/`}>Documentation</a>
+				<a href={REPO}>Repository</a>
+			</p>
+		</div>
+		<figure>
+			<div class="media"><img src="/media/varmonitor-live.jpg" width="1920" height="1003" alt="VarMonitor in live mode: a list of monitored variables on the left and five time-series plots on the right" /></div>
+			<figcaption>Fig. 1. Live mode against the demo application: monitored variables on the left, plots on the right.</figcaption>
+		</figure>
+	</section>
+
+	<div class="wrap">
+		<section class="block" id="features">
+			<header><p class="label">What it does</p><h2>Features</h2></header>
+			<div class="body">
+				<div class="rows">
+					{features.map((f) => (
+						<article class="row"><p class="mono">{f.area}</p><h3>{f.name}</h3><p class="desc">{f.text}</p></article>
+					))}
+				</div>
+			</div>
+		</section>
+
+		<section class="block" id="data-path">
+			<header><p class="label">Inside</p><h2>Data path</h2></header>
+			<div class="body">
+				<p class="prose">Samples and commands take different routes. Bulk data is written in place into a shared memory segment, and a small JSON protocol over a Unix socket handles everything else. The C++ process never serves HTTP.</p>
+				<figure>
+					<div class="table-wrap">
+						<svg class="diagram" viewBox="0 0 720 250" role="img" aria-label="Data path: the C++ process writes snapshots to shared memory and answers commands over a Unix socket. The Python backend and a native sidecar read shared memory. The backend pushes updates to the browser over WebSocket.">
+							<defs><marker id="vm-head" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="dg-fill" d="M0 0L8 4L0 8z" /></marker></defs>
+							<rect class="dg-box" x="1" y="1" width="200" height="104" />
+							<text class="dg-t" x="16" y="28">Your C++ process</text>
+							<text class="dg-s" x="16" y="56">libvarmonitor</text>
+							<text class="dg-s" x="16" y="80">registered variables</text>
+							<path class="dg-arrow" marker-end="url(#vm-head)" d="M204 34H306" />
+							<path class="dg-arrow" marker-start="url(#vm-head)" marker-end="url(#vm-head)" d="M204 76H306" />
+							<text class="dg-l" x="212" y="26">SHM snapshots</text>
+							<text class="dg-l" x="212" y="94">UDS commands</text>
+							<rect class="dg-box" x="309" y="1" width="180" height="104" />
+							<text class="dg-t" x="324" y="28">Web backend</text>
+							<text class="dg-s" x="324" y="56">Python, FastAPI</text>
+							<text class="dg-s" x="324" y="80">maps the segment</text>
+							<path class="dg-arrow" marker-start="url(#vm-head)" marker-end="url(#vm-head)" d="M492 54H566" />
+							<text class="dg-l" x="494" y="44">WebSocket</text>
+							<rect class="dg-box" x="569" y="1" width="150" height="104" />
+							<text class="dg-t" x="584" y="28">Browser</text>
+							<text class="dg-s" x="584" y="56">values, plots</text>
+							<text class="dg-s" x="584" y="80">alarms, replay</text>
+							<path class="dg-arrow" marker-end="url(#vm-head)" d="M100 108V196H306" />
+							<text class="dg-l" x="110" y="188">SHM, own semaphore</text>
+							<rect class="dg-box" x="309" y="145" width="180" height="104" />
+							<text class="dg-t" x="324" y="172">varmon_sidecar</text>
+							<text class="dg-s" x="324" y="200">native recorder</text>
+							<text class="dg-s" x="324" y="224">alarm worker</text>
+						</svg>
+					</div>
+					<figcaption>Fig. 2. Processes and the channels between them.</figcaption>
+				</figure>
+				<ol class="steps">
+					<li><span><b>Control over UDS.</b> List, register, get and set variables, subscribe to shared memory and negotiate rates.</span></li>
+					<li><span><b>Samples over SHM.</b> A fixed header, a table of subscribed variables and an optional ring buffer per variable. Each publish bumps a sequence number and signals one semaphore per consumer, so readers never steal each other's wake-ups.</span></li>
+					<li><span><b>Browser over WebSocket.</b> The backend sends only the monitored names, throttled to the rate the viewer asked for. While nobody watches closely, the library can export less to save CPU.</span></li>
+				</ol>
+			</div>
+		</section>
+
+		<section class="block" id="integrate">
+			<header><p class="label">Get started</p><h2>Integrate</h2></header>
+			<div class="body">
+				<p class="prose">Add the library to your CMake build and link it.</p>
+				<pre class="code">add_subdirectory(libvarmonitor)
+target_link_libraries(your_app PRIVATE varmonitor)</pre>
+				<p class="prose">Register the variables you want to expose, start the monitor and publish a snapshot from your loop.</p>
+				<pre class="code">#include &lt;var_monitor.hpp&gt;
+
+varmon::VarMonitor monitor;
+monitor.register_var("sensors.temperature", &amp;temperature);
+monitor.start(100);  <span class="c">// 100 ms sampling; starts UDS and SHM</span>
+
+<span class="c">// in your control loop</span>
+monitor.write_shm_snapshot();</pre>
+				<p class="prose">To try it with the bundled demo, build and launch the three parts.</p>
+				<pre class="code">./scripts/varmon/setup.sh
+mkdir -p build &amp;&amp; cd build &amp;&amp; cmake .. &amp;&amp; make -j$(nproc) &amp;&amp; cd ..
+./scripts/launch_demo.sh   <span class="c"># demo C++ application</span>
+./scripts/launch_web.sh    <span class="c"># web backend</span>
+./scripts/launch_ui.sh     <span class="c"># opens the browser</span></pre>
+			</div>
+		</section>
+
+		<section class="block" id="docs">
+			<header><p class="label">Read more</p><h2>Documentation</h2></header>
+			<div class="body">
+				<p class="prose dim">Full documentation in <a href={`${DOCS}/`}>English</a> and <a href="/VarMonitor/docs/es/">Spanish</a>.</p>
+				<div class="rows">
+					{guides.map((g) => (
+						<article class="row"><p class="mono">Guide</p><h3><a href={g.href}>{g.name}</a></h3><p class="desc">{g.text}</p></article>
+					))}
+				</div>
+			</div>
+		</section>
+	</div>
+</BaseLayout>

@@ -1,0 +1,19 @@
+---
+import { PANELS, PANEL_W, PANEL_H, cloud } from '../lib/trim-figure.mjs';
+interface Props { caption?: string }
+const { caption = 'Fig. 1. Level-flight trim: control positions against airspeed, a flight model checked point by point against test data. Synthetic data for illustration.' } = Astro.props;
+---
+<figure class="trim-figure">
+	<div class="panels" role="img" aria-label="Four scatter plots of control positions against airspeed, comparing flight test points with a model. Synthetic data.">
+		{PANELS.map((p) => <svg viewBox={`0 0 ${PANEL_W} ${PANEL_H}`} aria-hidden="true" set:html={cloud(p)} />)}
+	</div>
+	<p class="legend">
+		<span><i style="background:var(--ink)"></i>flight test points</span>
+		<span><i style="background:var(--trace)"></i>model, trimmed at each point</span>
+	</p>
+	<figcaption>{caption}</figcaption>
+</figure>
+<style>
+	.panels { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px 12px; }
+	svg { width: 100%; height: auto; }
+</style>

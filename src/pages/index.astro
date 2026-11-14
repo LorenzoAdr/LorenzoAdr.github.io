@@ -1,262 +1,151 @@
 ---
-import MainLayout from '../layouts/MainLayout.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import TrimFigure from '../components/TrimFigure.astro';
 
-const title = 'Lorenzo Arias | Unified Engineering Dashboard';
-const description =
-	'Lifecycle engineering dashboard for real-time C++ systems: development, validation, and runtime operations.';
+const LINKEDIN_URL = 'https://es.linkedin.com/in/lorenzo-arias-del-real';
+const GITHUB_URL = 'https://github.com/LorenzoAdr';
+const CONTACT_EMAIL = 'lorenzo.adr@proton.me';
+
+const experience = [
+	{
+		period: '2025 – Present',
+		role: 'Senior Flight Simulation Engineer',
+		platform: 'EC135 full flight simulator',
+		text: 'Responsible for the AFCS, developed together with the team, and for the architecture of the simulator qualification (QTG) environment: modular, platform-agnostic and built for efficient execution. Designed the flight test campaign for simulator data gathering.',
+	},
+	{
+		period: '2024 – 2025',
+		role: 'Flight Dynamics Engineer',
+		platform: 'H225M',
+		text: 'Physical and flight dynamics models, tuned and validated against flight test data, working closely with Airbus Helicopters.',
+	},
+	{
+		period: '2018 – 2024',
+		role: 'Flight Simulation Engineer',
+		platform: 'Fixed-wing',
+		text: 'Tactical Environment of the A400M simulator: control, navigation and flight dynamics algorithms for tactical entities, including air-to-air refuelling. Flight dynamics models for Level D simulators: A330, A330 MRTT, A320, B737, ATR72.',
+	},
+];
+
+const projects = [
+	{
+		name: 'tuide',
+		kind: 'Terminal IDE',
+		stack: 'C++17 · FTXUI',
+		state: 'Active',
+		on: true,
+		text: 'A full IDE in the terminal: multi-language indexing over LSP, debugging over DAP, symbol and core dump forensics, in 20–30 MB of RAM.',
+		links: [
+			{ href: '/tuide/', label: 'Project page' },
+			{ href: 'https://github.com/LorenzoAdr/TIDE', label: 'Repository' },
+		],
+	},
+	{
+		name: 'VarMonitor',
+		kind: 'Runtime observability',
+		stack: 'C++20 · POSIX SHM',
+		state: 'Maintained',
+		text: 'Real-time variable monitor for C++ applications over shared memory, with a browser front end for plots, alarms and recording.',
+		links: [
+			{ href: '/varmonitor/', label: 'Project page' },
+			{ href: '/VarMonitor/docs/en/', label: 'Docs' },
+			{ href: 'https://github.com/LorenzoAdr/RealTimeMonitor', label: 'Repository' },
+		],
+	},
+	{
+		name: 'PulseIntegrity',
+		kind: 'Link analysis',
+		stack: 'MAVLink',
+		state: 'Experimental',
+		text: 'Real-time integrity and stability analysis of MAVLink networks.',
+		links: [{ href: '/pulseintegrity/', label: 'Project page' }],
+	},
+];
+
+const disciplines = ['Flight dynamics', 'Flight control systems (AFCS)', 'FSTD qualification', 'C++', 'Software architecture', 'Real-time systems'];
 ---
 
-<MainLayout title={title} description={description} activeNav="intro">
-	<section id="dashboard-home-view" class="hero-shell reveal intro-shell">
-		<div class="intro-glow" aria-hidden="true"></div>
-		<div class="hero-grid">
-			<div class="hero-copy">
-				<div class="hero-badge">
-					<span class="hero-badge-dot" aria-hidden="true"></span>
-					Unified engineering profile
-				</div>
-				<div class="hero-actions">
-					<a href="https://github.com/LorenzoAdr" target="_blank" rel="noopener noreferrer" class="hero-github-chip">GitHub</a>
-				</div>
-				<h1 class="main-title">LORENZO ARIAS</h1>
-				<p class="role">Real-Time Data and Systems Engineer</p>
-				<p class="profile">
-					Specialized in low-latency architecture for critical systems. My workflow integrates foundational infrastructure (C++/SHM),
-					development and debugging tooling (TIE), and live integrity monitoring (Pulse Integrity). I pursue deterministic and efficient
-					solutions for complex data challenges.
-				</p>
-			</div>
+<BaseLayout>
+	<section class="wrap hero">
+		<div>
+			<h1>Lorenzo Arias del&nbsp;Real</h1>
+			<p class="role">Senior Flight Simulation Engineer · Real-time C++</p>
+			<p class="about">
+				Aeronautical engineer (MSc, UPM) with 8 years in full flight simulator development at Indra, across fixed-wing and rotorcraft
+				platforms. My work spans flight dynamics modelling, flight control systems and simulator qualification. Outside work I build
+				open-source tools for real-time C++ systems.
+			</p>
+			<ul class="disc" aria-label="Disciplines">
+				{disciplines.map((d) => <li>{d}</li>)}
+			</ul>
+			<p class="links">
+				<a href={GITHUB_URL} rel="me noopener">GitHub</a>
+				<a href={LINKEDIN_URL} rel="me noopener">LinkedIn</a>
+				<a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
+			</p>
 		</div>
+		<TrimFigure />
 	</section>
 
-	<section id="dashboard-varmonitor-view" class="vm-embed-shell dashboard-hidden">
-		<div class="vm-embed-frame-wrap">
-			<iframe
-				id="dashboard-varmonitor-iframe"
-				class="vm-embed-frame"
-				src="/VarMonitorPanel#shm"
-				title="VarMonitor embedded view"
-				loading="lazy"
-			></iframe>
-		</div>
-	</section>
-</MainLayout>
+	<div class="wrap">
+		<section class="block" id="experience">
+			<header><p class="label">Indra</p><h2>Experience</h2></header>
+			<div class="body">
+				<div class="rows">
+					{experience.map((e) => (
+						<article class="row">
+							<p class="mono">{e.period}</p>
+							<div><h3>{e.role}</h3><p class="sub">{e.platform}</p></div>
+							<p class="desc">{e.text}</p>
+						</article>
+					))}
+				</div>
+			</div>
+		</section>
+
+		<section class="block" id="projects">
+			<header><p class="label">Open source</p><h2>Projects</h2></header>
+			<div class="body">
+				<p class="prose dim">Personal tools for real-time C++ work, built and maintained in my own time.</p>
+				<div class="rows">
+					{projects.map((p) => (
+						<article class="row">
+							<p class="mono">{p.stack}</p>
+							<div><h3 class="proj">{p.name}<span class:list={['state', p.on && 'on']}>{p.state}</span></h3><p class="sub">{p.kind}</p></div>
+							<div>
+								<p class="desc">{p.text}</p>
+								<p class="links">{p.links.map((l) => <a href={l.href}>{l.label}</a>)}</p>
+							</div>
+						</article>
+					))}
+				</div>
+			</div>
+		</section>
+
+		<section class="block" id="contact">
+			<header><p class="label">Reach me</p><h2>Contact</h2></header>
+			<div class="body">
+				<dl class="contact">
+					<div><dt>Email</dt><dd><a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a></dd></div>
+					<div><dt>LinkedIn</dt><dd><a href={LINKEDIN_URL} rel="me noopener">lorenzo-arias-del-real</a></dd></div>
+					<div><dt>GitHub</dt><dd><a href={GITHUB_URL} rel="me noopener">LorenzoAdr</a></dd></div>
+				</dl>
+			</div>
+		</section>
+	</div>
+</BaseLayout>
 
 <style>
-	.hero-shell {
-		margin: 22px 20px;
-		padding: 12px 0 0;
-		position: relative;
-		overflow: visible;
-	}
-
-	.intro-glow {
-		pointer-events: none;
-		position: absolute;
-		inset: 0;
-		z-index: 0;
-	}
-
-	.intro-glow::before {
-		content: '';
-		position: absolute;
-		left: 50%;
-		top: 0;
-		width: 54rem;
-		height: 28rem;
-		transform: translateX(-50%);
-		border-radius: 999px;
-		background: rgb(6 182 212 / 0.1);
-		filter: blur(120px);
-	}
-
-	.hero-grid {
-		display: grid;
-		grid-template-columns: minmax(0, 1fr);
-		align-items: center;
-		gap: 28px;
-		position: relative;
-		z-index: 1;
-	}
-
-	.hero-copy {
-		padding: 6px 0;
-	}
-
-	.hero-badge {
-		margin: 0 0 14px;
-		width: fit-content;
-		display: inline-flex;
-		align-items: center;
-		gap: 8px;
-		padding: 6px 14px;
-		border-radius: 9999px;
-		border: 1px solid rgb(34 211 238 / 0.2);
-		background: rgb(6 182 212 / 0.05);
-		font-family: 'JetBrains Mono', 'Fira Code', ui-monospace, SFMono-Regular, Menlo, monospace;
-		font-size: 11px;
-		letter-spacing: 0.16em;
-		text-transform: uppercase;
-		color: rgb(103 232 249 / 0.95);
-	}
-
-	.hero-actions {
-		margin: 0 0 14px;
-	}
-
-	.hero-github-chip {
-		display: inline-flex;
-		align-items: center;
-		padding: 6px 11px;
-		border-radius: 10px;
-		border: 1px solid rgb(148 163 184 / 0.2);
-		background: rgb(255 255 255 / 0.05);
-		color: #e2e8f0;
-		text-decoration: none;
-		font-size: 0.82rem;
-		font-weight: 500;
-		transition: border-color 0.25s ease, background-color 0.25s ease, color 0.25s ease;
-	}
-
-	.hero-github-chip:hover {
-		border-color: rgb(34 211 238 / 0.35);
-		background: rgb(6 182 212 / 0.1);
-		color: #bae6fd;
-	}
-
-	.hero-badge-dot {
-		width: 6px;
-		height: 6px;
-		border-radius: 999px;
-		background: rgb(34 211 238);
-		box-shadow: 0 0 10px rgb(34 211 238 / 0.75);
-		animation: hero-dot-pulse 1.6s ease-in-out infinite;
-	}
-
-	.main-title {
-		margin: 0;
-		font-size: clamp(2.7rem, 6.6vw, 6.8rem);
-		line-height: 1.02;
-		letter-spacing: -0.03em;
-		font-weight: 600;
-		background: linear-gradient(to bottom, #ffffff, #64748b);
-		-webkit-background-clip: text;
-		background-clip: text;
-		color: transparent;
-	}
-
-	.role {
-		margin: 12px 0 0;
-		font-size: clamp(1.25rem, 2.6vw, 2rem);
-		line-height: 1.2;
-		letter-spacing: -0.01em;
-		font-weight: 600;
-		background: linear-gradient(to bottom, #ffffff, #64748b);
-		-webkit-background-clip: text;
-		background-clip: text;
-		color: transparent;
-	}
-
-	.profile {
-		margin: 18px 0 0;
-		max-width: 52ch;
-		line-height: 1.72;
-		color: #94a3b8;
-		font-size: 1.115rem;
-	}
-
-	.reveal {
-		opacity: 0;
-		transform: translateY(16px);
-		transition: opacity 700ms ease, transform 700ms ease;
-	}
-
-	.reveal.is-visible {
-		opacity: 1;
-		transform: translateY(0);
-	}
-
-	.dashboard-hidden {
-		display: none !important;
-	}
-
-	.vm-embed-shell {
-		margin: 18px 20px;
-	}
-
-	.vm-embed-frame-wrap {
-		border: 1px solid rgb(51 65 85 / 0.55);
-		border-radius: 16px;
-		overflow: hidden;
-		background: rgb(2 6 23 / 0.65);
-	}
-
-	.vm-embed-frame {
-		display: block;
-		width: 100%;
-		height: calc(100vh - 48px);
-		border: 0;
-		background: rgb(2 6 23);
-		color-scheme: dark;
-	}
-
-	@media (max-width: 720px) {
-		.hero-shell {
-			margin: 14px;
-			padding-top: 8px;
-		}
-
-		.hero-grid {
-			grid-template-columns: 1fr;
-			gap: 18px;
-		}
-
-		.main-title {
-			font-size: clamp(2.2rem, 11vw, 4.25rem);
-		}
-
-		.role {
-			font-size: 1.04rem;
-		}
-
-		.profile {
-			max-width: none;
-		}
-
-		.vm-embed-shell {
-			margin: 14px;
-		}
-
-		.vm-embed-frame {
-			height: calc(100vh - 40px);
-		}
-	}
-
-	@keyframes hero-dot-pulse {
-		0%,
-		100% {
-			opacity: 1;
-		}
-		50% {
-			opacity: 0.35;
-		}
-	}
+	.hero { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); gap: 40px; align-items: start; padding-block: 48px 64px; }
+	.hero h1 { font-size: clamp(3rem, 7.6vw, 5.6rem); letter-spacing: 0.005em; }
+	.role { font: 500 0.95rem var(--font-mono); margin-top: 14px; }
+	.about { margin-top: 18px; color: var(--ink-2); max-width: 54ch; }
+	.disc { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 20px; }
+	.disc li { font: 400 0.74rem var(--font-mono); border: 1px solid var(--rule); padding: 2px 8px; background: var(--sheet); }
+	.hero .links { display: flex; flex-wrap: wrap; gap: 6px 22px; margin-top: 22px; font: 500 0.82rem var(--font-mono); }
+	.proj { text-transform: none; }
+	.contact { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0 28px; border-top: 1px solid var(--rule); }
+	.contact div { padding-block: 12px; border-bottom: 1px solid var(--rule); }
+	.contact dt { font: 400 0.72rem var(--font-mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-2); }
+	@media (max-width: 860px) { .hero { grid-template-columns: 1fr; gap: 32px; padding-block: 32px 44px; } }
 </style>
-
-<script is:inline>
-	(() => {
-		const nodes = document.querySelectorAll('.reveal');
-		const observer = new IntersectionObserver(
-			(entries) => {
-				entries.forEach((entry) => {
-					if (!entry.isIntersecting) return;
-					entry.target.classList.add('is-visible');
-					observer.unobserve(entry.target);
-				});
-			},
-			{ threshold: 0.12, rootMargin: '0px 0px -10% 0px' },
-		);
-		nodes.forEach((node) => observer.observe(node));
-
-	})();
-</script>

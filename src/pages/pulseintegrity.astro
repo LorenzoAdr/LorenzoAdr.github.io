@@ -1,0 +1,91 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const nav = [
+	{ href: '#measures', label: 'Measures' },
+	{ href: '#pipeline', label: 'Pipeline' },
+	{ href: '/varmonitor/', label: 'VarMonitor' },
+];
+
+const measures = [
+	{ area: 'Timing', name: 'Rate and jitter per message', text: 'For every message ID: measured rate, jitter, mean, minimum and maximum interval, and time since the last frame.' },
+	{ area: 'Timing', name: 'Interval histogram', text: 'Distribution of the time between consecutive frames over the whole link, split by message group.' },
+	{ area: 'Integrity', name: 'Frame quality', text: 'Valid frames, CRC and signature failures, bytes outside valid frames, sequence loss and longest silence.' },
+	{ area: 'Summary', name: 'Stability score', text: 'One number for the scan, with the findings behind it written out: duplicated frames, noise on the wire, a message arriving slower than its nominal rate.' },
+];
+---
+
+<BaseLayout
+	title="PulseIntegrity | MAVLink link analysis"
+	description="PulseIntegrity scans a MAVLink stream and reports rate, jitter, frame integrity and stability per message. Experimental."
+	crumb="PulseIntegrity"
+	nav={nav}
+>
+	<section class="wrap project-hero">
+		<div>
+			<p class="label">Experimental</p>
+			<h1>MAVLink link integrity, measured live.</h1>
+			<p class="lede">
+				PulseIntegrity scans a MAVLink stream for a set time and reports how healthy the link is: which messages arrive, how regularly,
+				and how many frames are damaged or lost on the way.
+			</p>
+			<table class="spec">
+				<tr><th scope="row">Inputs</th><td>MAVLink over UDP and serial</td></tr>
+				<tr><th scope="row">Core</th><td>C++</td></tr>
+				<tr><th scope="row">Transport</th><td>Shared memory, WebSocket</td></tr>
+				<tr><th scope="row">Interface</th><td>Browser, on the VarMonitor stack</td></tr>
+				<tr><th scope="row">Status</th><td>Experimental, source not yet published</td></tr>
+			</table>
+		</div>
+		<figure>
+			<div class="media"><img src="/media/pulseintegrity-scan.jpg" width="1920" height="906" alt="A ten second scan: summary metrics, a histogram of intervals between frames and a per-message table with rate and jitter" /></div>
+			<figcaption>Fig. 1. A ten second scan: summary metrics, interval histogram and the per-message table.</figcaption>
+		</figure>
+	</section>
+
+	<div class="wrap">
+		<section class="block" id="measures">
+			<header><p class="label">What it reports</p><h2>Measures</h2></header>
+			<div class="body">
+				<div class="rows">
+					{measures.map((m) => (
+						<article class="row"><p class="mono">{m.area}</p><h3>{m.name}</h3><p class="desc">{m.text}</p></article>
+					))}
+				</div>
+			</div>
+		</section>
+
+		<section class="block" id="pipeline">
+			<header><p class="label">Inside</p><h2>Pipeline</h2></header>
+			<div class="body">
+				<p class="prose">Ingestors read MAVLink from UDP and serial ports, check framing and hand the frames to a C++ core with their timing preserved. The core publishes scan results into shared memory, and the same backend and browser interface as <a href="/varmonitor/">VarMonitor</a> display them.</p>
+				<figure>
+					<div class="table-wrap">
+						<svg class="diagram" viewBox="0 0 720 106" role="img" aria-label="Pipeline: MAVLink ingestors feed a C++ core, which publishes to shared memory read by a Python backend that serves the browser">
+							<defs><marker id="pi-head" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path class="dg-fill" d="M0 0L8 4L0 8z" /></marker></defs>
+							<rect class="dg-box" x="1" y="1" width="150" height="104" />
+							<text class="dg-t" x="14" y="28">Ingestors</text>
+							<text class="dg-s" x="14" y="56">UDP, serial</text>
+							<text class="dg-s" x="14" y="80">framing checks</text>
+							<path class="dg-arrow" marker-end="url(#pi-head)" d="M154 54H186" />
+							<rect class="dg-box" x="190" y="1" width="150" height="104" />
+							<text class="dg-t" x="203" y="28">C++ core</text>
+							<text class="dg-s" x="203" y="56">scan, statistics</text>
+							<path class="dg-arrow" marker-end="url(#pi-head)" d="M343 54H375" />
+							<text class="dg-l" x="346" y="44">SHM</text>
+							<rect class="dg-box" x="379" y="1" width="150" height="104" />
+							<text class="dg-t" x="392" y="28">Backend</text>
+							<text class="dg-s" x="392" y="56">Python, FastAPI</text>
+							<path class="dg-arrow" marker-end="url(#pi-head)" d="M532 54H564" />
+							<text class="dg-l" x="534" y="44">WS</text>
+							<rect class="dg-box" x="568" y="1" width="151" height="104" />
+							<text class="dg-t" x="581" y="28">Browser</text>
+							<text class="dg-s" x="581" y="56">scan panels</text>
+						</svg>
+					</div>
+					<figcaption>Fig. 2. From the wire to the browser.</figcaption>
+				</figure>
+			</div>
+		</section>
+	</div>
+</BaseLayout>

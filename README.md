@@ -1,11 +1,10 @@
 # LorenzoAdr.github.io
 
-Landing principal (nave nodriza) en Astro + Tailwind v4. Se despliega en la **raíz** de [lorenzoadr.github.io](https://lorenzoadr.github.io) (`base: '/'`).
+Personal site of Lorenzo Arias del Real and source of the design system shared with the project pages. Astro, static output, deployed to the root of [lorenzoadr.github.io](https://lorenzoadr.github.io) by GitHub Actions on push to `main`.
 
-## Desarrollo
+## Develop
 
 ```bash
-cd LorenzoAdr.github.io
 npm install
 npm run dev
 ```
@@ -16,15 +15,22 @@ npm run dev
 npm run build
 ```
 
-Salida en `dist/`.
+## Structure
 
-## Enlaces de contacto
+- `public/ui/tokens.css`: colour and type tokens. Project pages in other repos link this file from the same domain.
+- `src/styles/global.css`: base styles and components (site bar, section block, rows, figures).
+- `src/layouts/BaseLayout.astro`: page shell. Pass `crumb` on project pages.
+- `src/lib/trim-figure.mjs`: the house figure. All data is synthetic, generated from formulas and a fixed seed.
+- `src/pages/index.astro`: profile, experience, projects, contact. Contact links are constants at the top.
 
-Definidos en `src/pages/index.astro` (`LINKEDIN_URL`, `CONTACT_EMAIL`). Actualízalos si cambian.
+## Figures
 
-## GitHub Pages (repo `username.github.io`)
+```bash
+npm run figures
+```
 
-1. En el repo **LorenzoAdr.github.io**, Settings → Pages → Build: **GitHub Actions** (recomendado) o sube el contenido de `dist/` a la rama que Pages use como raíz.
-2. Si usas Actions, un workflow típico hace `npm ci && npm run build` y publica `dist/` con `actions/upload-pages-artifact` + `deploy-pages`.
+Writes the figure as SVG and PNG, light and dark, plus the LinkedIn banner to `downloads/`, and the social card to `public/`.
 
-El proyecto **VarMonitor** enlazado por defecto a `https://lorenzoadr.github.io/VarMonitor/` (mismo usuario, repo de proyecto).
+## Design rules
+
+One accent colour, used for the model trace and the active state only. Square corners, hairlines, no shadows, no gradients, no entrance animations. Left-aligned with a margin column for labels and dates. Figures carry a numbered caption and state that their data is synthetic.

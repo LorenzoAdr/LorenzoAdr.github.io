@@ -1,0 +1,201 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const REPO = 'https://github.com/LorenzoAdr/TIDE';
+const DOCS = `${REPO}/blob/main/docs`;
+const nav = [
+	{ href: '#features', label: 'Features' },
+	{ href: '#languages', label: 'Languages' },
+	{ href: '#install', label: 'Install' },
+	{ href: `${DOCS}/README.md`, label: 'Docs' },
+	{ href: REPO, label: 'GitHub' },
+];
+
+const features = [
+	{ area: 'Edit', name: 'Code intelligence', text: 'Tree-sitter highlighting and outline for every supported language. Language servers add completion, diagnostics and navigation when they are available, started lazily per language.' },
+	{ area: 'Debug', name: 'Debugger', text: 'Debug Adapter Protocol sessions with breakpoints, stack, locals and watches. Launch a program, attach to a PID or connect to a remote target. F2 starts a session, F5 relaunches the last one.' },
+	{ area: 'Run', name: 'Embedded terminal', text: 'A real interactive shell over a PTY inside the IDE. Build, run tools and keep a working session without leaving the editor, including while debugging.' },
+	{ area: 'Inspect', name: 'Binary forensics', text: 'Browse symbols of objects and libraries with nm, jump from a symbol to its source and filter for undefined references. Load a core dump for post-mortem analysis, with an optional embedded Core Analyzer build for heap searches.' },
+	{ area: 'Version', name: 'Git', text: 'Status, commit, branches, push and pull from a simple interface.' },
+	{ area: 'Ship', name: 'Single binary', text: 'Build one executable that embeds the language servers and debug adapters you need. Few system dependencies, and install without deep tooling knowledge.' },
+];
+
+const languages = [
+	['C / C++', 'clangd', 'GDB'],
+	['Python', 'basedpyright', 'debugpy'],
+	['Shell', 'bash-language-server', 'bash-debug'],
+	['Rust', 'rust-analyzer', 'GDB'],
+	['Go', 'gopls', 'GDB'],
+	['Zig', 'zls', 'GDB'],
+	['Fortran', 'fortls', 'GDB'],
+	['LaTeX', 'TexLab', ''],
+	['Lua', 'lua-language-server', ''],
+	['JavaScript / TypeScript', 'typescript-language-server', ''],
+	['CMake', 'neocmakelsp', ''],
+	['Make', 'make-ls', ''],
+	['YAML', 'yaml-language-server', ''],
+];
+
+const guides = [
+	{ href: `${DOCS}/user-guide.md`, name: 'User guide', text: 'Workflows, CLI, languages, IDE and debug modes, troubleshooting.' },
+	{ href: `${DOCS}/keyboard-shortcuts.md`, name: 'Keyboard shortcuts', text: 'Complete key binding reference. F1 opens it inside tuide.' },
+	{ href: `${DOCS}/architecture.md`, name: 'Architecture', text: 'Threads, DAP, multi-LSP and UI structure.' },
+	{ href: `${DOCS}/development.md`, name: 'Development', text: 'Build, project layout and contributing.' },
+];
+
+---
+
+<BaseLayout
+	title="tuide | A full IDE in the terminal"
+	description="tuide is a terminal IDE with multi-language indexing over LSP, debugging over DAP, an embedded terminal and binary forensics, in 20–30 MB of RAM."
+	crumb="tuide"
+	nav={nav}
+>
+	<section class="wrap project-hero">
+		<div>
+			<p class="label">Open source · Apache-2.0</p>
+			<h1>A full IDE in the terminal.</h1>
+			<p class="lede">
+				tuide sits between ultra-light terminal editors and full graphical IDEs. You keep the speed and footprint of a text interface and
+				still get a complete mouse-and-keyboard environment for everyday work.
+			</p>
+			<table class="spec">
+				<tr><th scope="row">Footprint</th><td>20–30 MB RAM, very low CPU</td></tr>
+				<tr><th scope="row">Languages</th><td>13, via Tree-sitter and LSP</td></tr>
+				<tr><th scope="row">Debugging</th><td>DAP: GDB, debugpy, bash-debug</td></tr>
+				<tr><th scope="row">Platform</th><td>Linux x86_64, glibc 2.27 or later</td></tr>
+				<tr><th scope="row">Built with</th><td>C++17, FTXUI, CMake</td></tr>
+			</table>
+			<p class="actions">
+				<a class="primary" href={`${REPO}/releases/latest`}>Download AppImage</a>
+				<a href={REPO}>Repository</a>
+			</p>
+		</div>
+		<figure>
+			<div class="media">
+				<video controls preload="none" playsinline muted poster="/media/tuide-editor.jpg">
+					<source src="/media/tuide-demo.mp4" type="video/mp4" />
+				</video>
+			</div>
+			<figcaption>Fig. 1. Editing C++ in tuide: completion and diagnostics from clangd, file explorer, outline and the embedded terminal. Press play for the demo.</figcaption>
+		</figure>
+	</section>
+
+	<div class="wrap">
+		<section class="block" id="features">
+			<header><p class="label">What it does</p><h2>Features</h2></header>
+			<div class="body">
+				<div class="rows">
+					{features.map((f) => (
+						<article class="row">
+							<p class="mono">{f.area}</p>
+							<h3>{f.name}</h3>
+							<p class="desc">{f.text}</p>
+						</article>
+					))}
+				</div>
+				<div class="table-wrap">
+					<table class="data">
+						<caption class="label" style="text-align:left;padding-bottom:8px">Layout by mode</caption>
+						<thead><tr><th>Region</th><th>IDE mode</th><th>Debug mode</th></tr></thead>
+						<tbody>
+							<tr><td>Left</td><td>File explorer</td><td>File explorer</td></tr>
+							<tr><td>Center</td><td>Editor</td><td>Source view</td></tr>
+							<tr><td>Right</td><td>Outline, search</td><td>Outline, watches, stack</td></tr>
+							<tr><td>Bottom</td><td>Terminal</td><td>Terminal, debug console</td></tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</section>
+
+		<section class="block" id="languages">
+			<header><p class="label">Support</p><h2>Languages</h2></header>
+			<div class="body">
+				<p class="prose dim">Syntax highlighting and outline work for every language below without any server. The language server is optional and can be embedded in the binary or found on PATH.</p>
+				<div class="table-wrap">
+					<table class="data">
+						<thead><tr><th>Language</th><th>Language server</th><th>Debug adapter</th></tr></thead>
+						<tbody>
+							{languages.map(([l, s, d]) => <tr><td>{l}</td><td class="mono">{s}</td><td class="mono">{d || <span class="dim">none</span>}</td></tr>)}
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</section>
+
+		<section class="block" id="architecture">
+			<header><p class="label">Inside</p><h2>Architecture</h2></header>
+			<div class="body">
+				<p class="prose">All interface state lives on a single UI thread. The debugger, the indexers and each language server run in the background and report back through thread-safe queues, so the editor stays responsive while they work.</p>
+				<figure>
+					<div class="table-wrap">
+						<svg class="diagram" viewBox="0 0 720 292" role="img" aria-label="Thread diagram: one UI thread sends commands and file events to a DAP thread, indexer threads and language server clients">
+							<defs><marker id="dg-head" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="dg-fill" d="M0 0L8 4L0 8z" /></marker></defs>
+							<rect class="dg-box" x="1" y="1" width="718" height="104" />
+							<text class="dg-t" x="18" y="28">UI thread (FTXUI)</text>
+							<text class="dg-s" x="18" y="56">Application · MainLayout · panels · modals</text>
+							<text class="dg-s" x="18" y="80">DebugModel · WorkspaceModel · FocusManager</text>
+							<path class="dg-arrow" marker-start="url(#dg-head)" marker-end="url(#dg-head)" d="M112 108V184" />
+							<path class="dg-arrow" marker-start="url(#dg-head)" marker-end="url(#dg-head)" d="M360 108V184" />
+							<path class="dg-arrow" marker-start="url(#dg-head)" marker-end="url(#dg-head)" d="M608 108V184" />
+							<text class="dg-l" x="122" y="150">UiCommand</text>
+							<text class="dg-l" x="370" y="150">file events</text>
+							<rect class="dg-box" x="1" y="187" width="222" height="104" />
+							<text class="dg-t" x="18" y="214">DAP thread</text>
+							<text class="dg-s" x="18" y="242">DapBackend, cppdap</text>
+							<text class="dg-s" x="18" y="266">GDB or debugpy</text>
+							<rect class="dg-box" x="249" y="187" width="222" height="104" />
+							<text class="dg-t" x="266" y="214">Indexer threads</text>
+							<text class="dg-s" x="266" y="242">WorkspaceIndexer</text>
+							<text class="dg-s" x="266" y="266">SymbolIndexer</text>
+							<rect class="dg-box" x="497" y="187" width="222" height="104" />
+							<text class="dg-t" x="514" y="214">Language servers (LSP)</text>
+							<text class="dg-s" x="514" y="242">LspClient × N over stdio</text>
+							<text class="dg-s" x="514" y="266">clangd, rust-analyzer, …</text>
+						</svg>
+					</div>
+					<figcaption>Fig. 2. Threads and the messages between them.</figcaption>
+				</figure>
+			</div>
+		</section>
+
+		<section class="block" id="install">
+			<header><p class="label">Get it</p><h2>Install</h2></header>
+			<div class="body">
+				<p class="prose">The <a href={`${REPO}/releases/latest`}>latest release</a> ships an AppImage of the core, without embedded language servers or debug adapters. It uses the ones installed on your system.</p>
+				<pre class="code"><span class="c"># after downloading the AppImage from the releases page</span>
+chmod +x tuide-*.AppImage
+./tuide-*.AppImage</pre>
+				<p class="prose">To build from source you need Linux, CMake 3.20 or later and a C++17 compiler. GDB 14 or later with DAP is optional, for native debugging.</p>
+				<pre class="code">git clone https://github.com/LorenzoAdr/TIDE.git && cd TIDE
+./tools/compile.sh
+./tools/launch.sh</pre>
+				<pre class="code"><span class="c"># open a workspace, edit, debug with F2</span>
+./build/tuide --cwd ./my-project
+
+<span class="c"># launch a program under the debugger</span>
+./build/tuide ./build/hello --args foo bar
+
+<span class="c"># attach to a process or a remote target</span>
+./build/tuide --attach 12345 ./build/hello
+./build/tuide --target localhost:1234 ./build/hello</pre>
+			</div>
+		</section>
+
+		<section class="block" id="docs">
+			<header><p class="label">Read more</p><h2>Documentation</h2></header>
+			<div class="body">
+				<div class="rows">
+					{guides.map((g) => (
+						<article class="row">
+							<p class="mono">Guide</p>
+							<h3><a href={g.href}>{g.name}</a></h3>
+							<p class="desc">{g.text}</p>
+						</article>
+					))}
+				</div>
+			</div>
+		</section>
+	</div>
+</BaseLayout>
